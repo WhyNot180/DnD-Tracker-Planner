@@ -1,0 +1,48 @@
+// This is the pseudocode for the Neo4j queries
+
+// Create NPC without relationships
+
+CREATE (a:Npc {name: 'Name'});
+
+// Create NPC with relationship
+
+CREATE (a:Npc {name: 'Name'})-[:RELATIONSHIP]->(b:Npc {name: 'Other Name'});
+
+// Add relationship to Npc (without duplicates)
+
+MERGE (a:Npc {name: 'Name'})
+MERGE (b:Npc {name: 'Other Name'})
+MERGE (a)-[r:RELATIONSHIP]->(b);
+
+// Update or create property
+
+MATCH (a:Npc {name: 'Name'})
+SET a.name = 'Different Name';
+
+// Search all nodes for a node with a specific name
+
+MATCH (n)
+WHERE n.name CONTAINS 'Name'
+RETURN n;
+
+// Search all nodes belonging to a specific node with a specific name
+
+MATCH (n)-[:BELONGS_TO]->(a:Campaign {name: 'Name'})
+WHERE n.name CONTAINS 'Name'
+RETURN n;
+
+// Search all nodes with a specific label and name
+
+MATCH (n:Campaign)
+WHERE n.name CONTAINS 'Name'
+RETURN n;
+
+// Delete a relationship from a node
+
+MATCH (a:Npc {name: 'Name'})-[r:BELONGS_TO]->(b:Campaign {name: 'Other Name'})
+DELETE r;
+
+// Completely delete node
+
+MATCH (a:NPC {name: 'Name'})
+DETACH DELETE a;
