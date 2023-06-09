@@ -7,6 +7,38 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        
+        <Grid x:Name="nav_pnl"
+              HorizontalAlignment="Left"
+              Width="75"
+              Background="#2E333A">
+            
+            <StackPanel x:Name="st_pnl">
+                
+                <Grid Height="30">
+
+                    <ToggleButton x:Name="Tg_Btn"
+                                  Grid.Column="0"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Left"
+                                  MaxHeight="20"
+                                  MaxWidth="60"
+                                  Height="20"
+                                  Width="60"
+                                  Margin="5">
+
+                        <ToggleButton.Background>
+                            <ImageBrush ImageSource="Assets/DnD_Button_Border.png"
+                                        Stretch="None"/>
+                            
+
+                        </ToggleButton.Background>
+
+                    </ToggleButton>
+
+                </Grid>
+            
+            </StackPanel>
+
+        </Grid>
     </Grid>
 </Window>
