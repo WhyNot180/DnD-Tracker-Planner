@@ -8,7 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("assets/dnd%20button%20border.png")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("assets/dnd%20description%20border.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("assets/sidebar_button_border.png")]
 
 

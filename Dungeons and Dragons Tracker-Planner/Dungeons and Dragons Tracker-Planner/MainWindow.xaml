@@ -6,38 +6,74 @@
         xmlns:local="clr-namespace:Dungeons_and_Dragons_Tracker_Planner"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    
     <Grid>
-        <Grid x:Name="nav_pnl"
+        <Grid.Background>
+            <ImageBrush ImageSource="Assets/wooden-floor-background.jpg"/>
+        </Grid.Background>
+            <Grid x:Name="nav_pnl"
               HorizontalAlignment="Left"
-              Width="75"
+              Width="150"
               Background="#2E333A">
             
-            <StackPanel x:Name="st_pnl">
-                
-                <Grid Height="30">
-
-                    <ToggleButton x:Name="Tg_Btn"
-                                  Grid.Column="0"
-                                  VerticalAlignment="Center"
-                                  HorizontalAlignment="Left"
-                                  MaxHeight="20"
-                                  MaxWidth="60"
-                                  Height="20"
-                                  Width="60"
-                                  Margin="5">
-
-                        <ToggleButton.Background>
-                            <ImageBrush ImageSource="Assets/DnD_Button_Border.png"
-                                        Stretch="None"/>
+            <ScrollViewer x:Name="sv_pnl" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
+                <StackPanel x:Name="st_pnl">
+                    <StackPanel.Resources>
+                        <Style x:Key="sidebar_grids" TargetType="Grid">
+                            <Setter Property="Height" Value="50"/>
+                        </Style>
+                        <Style x:Key="sidebar_buttons" TargetType="Button">
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                            <Setter Property="Height" Value="40"/>
+                            <Setter Property="Width" Value="125"/>
+                            <Setter Property="Margin" Value="5"/>
+                            <Setter Property="BorderThickness" Value="1.25"/>
+                            <Setter Property="BorderBrush" Value="Gold"/>
                             
+                            <Setter Property="Background">
+                                <Setter.Value>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="DarkGoldenrod" Offset="0.0"/>
+                                        <GradientStop Color="NavajoWhite" Offset="1.0"/>
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="FontSize" Value="15"/>
+                            <Setter Property="Foreground" Value="Maroon"/>
+                        </Style>
+                    </StackPanel.Resources>
+                    <Grid Style="{StaticResource sidebar_grids}">
+                        <TextBox Margin="5" HorizontalAlignment="Left" Height="30" Width="125" />
+                    </Grid>
+                    <Grid Style="{StaticResource sidebar_grids}">
 
-                        </ToggleButton.Background>
+                        <Button x:Name="Campaign_Btn"
+                            Style="{StaticResource sidebar_buttons}"
+                            Content="Campaigns"
+                            />
 
-                    </ToggleButton>
-
-                </Grid>
-            
-            </StackPanel>
+                    </Grid>
+                    <Grid Style="{StaticResource sidebar_grids}">
+                        <Button x:Name="Adventure_Btn"
+                            Style="{StaticResource sidebar_buttons}"
+                            Content="Adventures"
+                                />
+                    </Grid>
+                    <Grid Style="{StaticResource sidebar_grids}">
+                        <Button x:Name="NPCs_Btn"
+                            Style="{StaticResource sidebar_buttons}"
+                            Content="NPCs"
+                                />
+                    </Grid>
+                    <Grid Style="{StaticResource sidebar_grids}">
+                        <Button x:Name="Encounters_Btn"
+                            Style="{StaticResource sidebar_buttons}"
+                            Content="Encounters"
+                                />
+                    </Grid>
+                </StackPanel>
+            </ScrollViewer>
 
         </Grid>
     </Grid>

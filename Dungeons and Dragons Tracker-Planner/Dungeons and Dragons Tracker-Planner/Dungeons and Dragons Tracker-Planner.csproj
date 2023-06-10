@@ -95,8 +95,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\DnD_Button_Border.png" />
     <Resource Include="Assets\DnD_Description_Border.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\wooden-floor-background.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\SideBar_Button_Border.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
