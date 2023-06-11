@@ -14,3 +14,14 @@ C:\Users\Bence\Documents\Projects\School\DnD Tracker-Planner\DnD-Tracker-Planner
 C:\Users\Bence\Documents\Projects\School\DnD Tracker-Planner\DnD-Tracker-Planner\Dungeons and Dragons Tracker-Planner\Dungeons and Dragons Tracker-Planner\obj\Debug\Dungeons and Dragons Tracker-Planner.csproj.CoreCompileInputs.cache
 C:\Users\Bence\Documents\Projects\School\DnD Tracker-Planner\DnD-Tracker-Planner\Dungeons and Dragons Tracker-Planner\Dungeons and Dragons Tracker-Planner\obj\Debug\Dungeons and Dragons Tracker-Planner.exe
 C:\Users\Bence\Documents\Projects\School\DnD Tracker-Planner\DnD-Tracker-Planner\Dungeons and Dragons Tracker-Planner\Dungeons and Dragons Tracker-Planner\obj\Debug\Dungeons and Dragons Tracker-Planner.pdb
+C:\Users\Bence\Documents\Projects\School\DnD Tracker-Planner\DnD-Tracker-Planner\Dungeons and Dragons Tracker-Planner\Dungeons and Dragons Tracker-Planner\bin\Debug\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\Bence\Documents\Projects\School\DnD Tracker-Planner\DnD-Tracker-Planner\Dungeons and Dragons Tracker-Planner\Dungeons and Dragons Tracker-Planner\bin\Debug\Neo4j.Driver.dll
+C:\Users\Bence\Documents\Projects\School\DnD Tracker-Planner\DnD-Tracker-Planner\Dungeons and Dragons Tracker-Planner\Dungeons and Dragons Tracker-Planner\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+C:\Users\Bence\Documents\Projects\School\DnD Tracker-Planner\DnD-Tracker-Planner\Dungeons and Dragons Tracker-Planner\Dungeons and Dragons Tracker-Planner\bin\Debug\System.Threading.Tasks.Extensions.dll
+C:\Users\Bence\Documents\Projects\School\DnD Tracker-Planner\DnD-Tracker-Planner\Dungeons and Dragons Tracker-Planner\Dungeons and Dragons Tracker-Planner\bin\Debug\System.ValueTuple.dll
+C:\Users\Bence\Documents\Projects\School\DnD Tracker-Planner\DnD-Tracker-Planner\Dungeons and Dragons Tracker-Planner\Dungeons and Dragons Tracker-Planner\bin\Debug\Microsoft.Bcl.AsyncInterfaces.xml
+C:\Users\Bence\Documents\Projects\School\DnD Tracker-Planner\DnD-Tracker-Planner\Dungeons and Dragons Tracker-Planner\Dungeons and Dragons Tracker-Planner\bin\Debug\Neo4j.Driver.xml
+C:\Users\Bence\Documents\Projects\School\DnD Tracker-Planner\DnD-Tracker-Planner\Dungeons and Dragons Tracker-Planner\Dungeons and Dragons Tracker-Planner\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+C:\Users\Bence\Documents\Projects\School\DnD Tracker-Planner\DnD-Tracker-Planner\Dungeons and Dragons Tracker-Planner\Dungeons and Dragons Tracker-Planner\bin\Debug\System.Threading.Tasks.Extensions.xml
+C:\Users\Bence\Documents\Projects\School\DnD Tracker-Planner\DnD-Tracker-Planner\Dungeons and Dragons Tracker-Planner\Dungeons and Dragons Tracker-Planner\bin\Debug\System.ValueTuple.xml
+C:\Users\Bence\Documents\Projects\School\DnD Tracker-Planner\DnD-Tracker-Planner\Dungeons and Dragons Tracker-Planner\Dungeons and Dragons Tracker-Planner\obj\Debug\Dungeons and Dragons Tracker-Planner.csproj.CopyComplete
