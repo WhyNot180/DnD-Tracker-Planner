@@ -78,6 +78,7 @@
                         <Button x:Name="Adventure_Btn"
                             Style="{StaticResource sidebar_buttons}"
                             Content="Adventures"
+                            Click="Adventure_Btn_Click"
                                 />
                     </Grid>
                     <Grid Style="{StaticResource sidebar_grids}" x:Name="NPCs_Btn_Grid">
@@ -92,6 +93,10 @@
                             Content="Encounters"
                                 />
                     </Grid>
+                    
+                    <StackPanel x:Name="Secondary_st_pnl"/>
+
+
                 </StackPanel>
             </ScrollViewer>
 
