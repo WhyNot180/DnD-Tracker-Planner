@@ -87,6 +87,7 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
         private string current_campaign;
         private string current_adventure;
+        private string current_npc;
 
         private async void Campaign_Btn_Click(object sender, RoutedEventArgs e)
         {
@@ -121,7 +122,7 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
         private void ResultAdventure_Click(object sender, RoutedEventArgs e)
         {
-            sidebar_state++;
+            if (sidebar_state == 1) sidebar_state++; else sidebar_state += 2;
 
             Button button = e.Source as Button;
 
@@ -130,6 +131,13 @@ namespace Dungeons_and_Dragons_Tracker_Planner
             Secondary_st_pnl.Children.Clear();
             NPCs_Btn_Grid.Visibility = Visibility.Visible;
             Encounters_Btn_Grid.Visibility = Visibility.Visible;
+        }
+
+        private void ResultNPC_Click(object sender, RoutedEventArgs e)
+        {
+            Button button = e.Source as Button;
+
+            current_npc = button.Content.ToString();
         }
 
         private async void Adventure_Btn_Click(object sender, RoutedEventArgs e)
@@ -166,6 +174,57 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
                 default:
                     Console.WriteLine("Adventure defaulted!!!");
+                    break;
+            }
+        }
+
+        private async void NPC_Btn_Click(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine(sidebar_state);
+            switch (sidebar_state)
+            {
+                case 0:
+                    Campaign_Btn_Grid.Visibility = Visibility.Collapsed;
+                    Adventure_Btn_Grid.Visibility = Visibility.Collapsed;
+                    NPCs_Btn_Grid.Visibility = Visibility.Collapsed;
+                    Encounters_Btn_Grid.Visibility = Visibility.Collapsed;
+
+                    Back_Btn_Grid.Visibility = Visibility.Visible;
+                    SearchText_Grid.Visibility = Visibility.Visible;
+
+                    var npcs = await sessionRead("MATCH (n:NPC) RETURN n.name");
+
+                    Create_Content_Btns(npcs, new RoutedEventHandler(ResultNPC_Click));
+
+                    break;
+
+                case 1:
+                    Adventure_Btn_Grid.Visibility = Visibility.Collapsed;
+                    NPCs_Btn_Grid.Visibility = Visibility.Collapsed;
+                    Encounters_Btn_Grid.Visibility = Visibility.Collapsed;
+
+                    var campaign_npcs = await sessionRead("MATCH (n:NPC)-[:BELONGS_TO]->(a:Adventure)-[:BELONGS_TO]->(c:Campaign) " +
+                                    $"WHERE c.name = \"{current_campaign}\" " +
+                                    " RETURN n.name");
+
+                    Create_Content_Btns(campaign_npcs, new RoutedEventHandler(ResultNPC_Click));
+
+                    break;
+
+                case 2:
+                    NPCs_Btn_Grid.Visibility = Visibility.Collapsed;
+                    Encounters_Btn_Grid.Visibility = Visibility.Collapsed;
+
+                    var adventure_npcs = await sessionRead("MATCH (n:NPC)-[:BELONGS_TO]->(a:Adventure) " +
+                                    $"WHERE a.name = \"{current_adventure}\" " +
+                                    " RETURN n.name");
+
+                    Create_Content_Btns(adventure_npcs, new RoutedEventHandler(ResultNPC_Click));
+
+                    break;
+
+                default:
+                    Console.WriteLine("NPC defaulted!!!");
                     break;
             }
         }

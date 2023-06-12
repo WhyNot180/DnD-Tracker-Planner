@@ -85,6 +85,7 @@
                         <Button x:Name="NPCs_Btn"
                             Style="{StaticResource sidebar_buttons}"
                             Content="NPCs"
+                            Click="NPC_Btn_Click"
                                 />
                     </Grid>
                     <Grid Style="{StaticResource sidebar_grids}" x:Name="Encounters_Btn_Grid">
