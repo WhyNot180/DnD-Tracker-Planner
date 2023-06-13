@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -41,15 +42,172 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
         private int sidebar_state = 0;
 
-        private void SearchText_Changed(object sender, RoutedEventArgs e)
+        private async void Search_SessionReader(string query)
         {
-            
+            using (var session = _driver.AsyncSession())
+            {
+                var queryResults = await session.ExecuteReadAsync(
+                    async tx =>
+                    {
+
+                        var namesList = new List<string>();
+
+                        var labelsList = new List<string>();
+
+                        var reader = await tx.RunAsync(
+                            query);
+
+                        while (await reader.FetchAsync())
+                        {
+                            namesList.Add(reader.Current[0].ToString());
+                            labelsList.Add(reader.Current[1].ToString());
+                        }
+
+                        List<string>[] arrayResults = { namesList, labelsList };
+
+                        return arrayResults;
+                    });
+
+                for (var i = 0; i < queryResults[0].Count; i++)
+                {
+                    Grid grid = new Grid();
+                    Button button = new Button();
+                    Secondary_st_pnl.Children.Add(grid);
+                    grid.Children.Add(button);
+                    grid.Style = (Style)st_pnl.FindResource("sidebar_grids");
+                    button.Style = (Style)st_pnl.FindResource("sidebar_buttons");
+                    button.Content = queryResults[0].ElementAt(i);
+                    if (queryResults[1].ElementAt(i).Equals("Campaign"))
+                    {
+                        button.Click += ResultCampaign_Click;
+                    }
+                    else if (queryResults[1].ElementAt(i).Equals("Adventure"))
+                    {
+                        button.Click += ResultAdventure_Click;
+                    }
+                    else if (queryResults[1].ElementAt(i).Equals("NPC"))
+                    {
+                        button.Click += ResultNPC_Click;
+                    }
+                    else if (queryResults[1].ElementAt(i).Equals("Encounter"))
+                    {
+                        button.Click += ResultEncounter_Click;
+                    }
+                }
+
+            }
+        }
+
+        private async void SearchText_Changed(object sender, RoutedEventArgs e)
+        {
+
+            Secondary_st_pnl.Children.Clear();
+
+            if (sidebar_nav_states.Count == 0)
+            {
+                if (SearchText.Text.Equals(""))
+                {
+                    Campaign_Btn_Grid.Visibility = Visibility.Visible;
+                    Adventure_Btn_Grid.Visibility = Visibility.Visible;
+                    NPCs_Btn_Grid.Visibility = Visibility.Visible;
+                    Encounters_Btn_Grid.Visibility = Visibility.Visible;
+                    return;
+                }
+
+                Campaign_Btn_Grid.Visibility = Visibility.Collapsed;
+                Adventure_Btn_Grid.Visibility = Visibility.Collapsed;
+                NPCs_Btn_Grid.Visibility = Visibility.Collapsed;
+                Encounters_Btn_Grid.Visibility = Visibility.Collapsed;
+
+                Search_SessionReader($"MATCH (n) WHERE n.name CONTAINS \"{SearchText.Text}\" RETURN n.name, labels(n)");
+                return;
+            }
+
+            Campaign_Btn_Grid.Visibility = Visibility.Collapsed;
+            Adventure_Btn_Grid.Visibility = Visibility.Collapsed;
+            NPCs_Btn_Grid.Visibility = Visibility.Collapsed;
+            Encounters_Btn_Grid.Visibility = Visibility.Collapsed;
+
+            switch (sidebar_nav_states.Last())
+            {
+                case "Campaigns":
+
+                    var campaigns = await sessionRead($"MATCH (c:Campaign) WHERE c.name CONTAINS \"{SearchText.Text}\" RETURN c.name");
+                    
+                    Create_Content_Btns(campaigns, new RoutedEventHandler(ResultCampaign_Click));
+                    
+                    break;
+                
+                case "Adventures":
+
+                    var adventures = await sessionRead($"MATCH (a:Adventure) WHERE a.name CONTAINS \"{SearchText.Text}\" RETURN a.name");
+
+                    Create_Content_Btns(adventures, new RoutedEventHandler(ResultAdventure_Click));
+
+                    break;
+                case "NPCs":
+
+                    var npcs = await sessionRead($"MATCH (n:NPC) WHERE n.name CONTAINS \"{SearchText.Text}\" RETURN n.name");
+
+                    Create_Content_Btns(npcs, new RoutedEventHandler(ResultNPC_Click));
+
+                    break;
+                case "Encounters":
+
+                    var encounters = await sessionRead($"MATCH (e:Encounter) WHERE e.name CONTAINS \"{SearchText.Text}\" RETURN e.name");
+
+                    Create_Content_Btns(encounters, new RoutedEventHandler(ResultEncounter_Click));
+
+                    break;
+                default:
+
+                    switch (sidebar_nav_states.ElementAt(sidebar_nav_states.Count() - 2))
+                    {
+                        case "Campaigns":
+
+                            if (SearchText.Text.Equals(""))
+                            {
+                                Adventure_Btn_Grid.Visibility = Visibility.Visible;
+                                NPCs_Btn_Grid.Visibility = Visibility.Visible;
+                                Encounters_Btn_Grid.Visibility = Visibility.Visible;
+                                return;
+                            }
+
+                            Search_SessionReader("MATCH (n)-[:BELONGS_TO]->(a:Adventure)-[:BELONGS_TO]->(c:Campaign) " + 
+                                $"WHERE n.name CONTAINS \"{SearchText.Text}\" " +
+                                "RETURN n.name, labels(n)");
+
+                            Search_SessionReader("MATCH (n)-[:BELONGS_TO]->(c:Campaign) " + 
+                                $"WHERE n.name CONTAINS \"{SearchText.Text}\" " +
+                                "RETURN n.name, labels(n)");
+
+                            break;
+                        case "Adventures":
+
+                            if (SearchText.Text.Equals(""))
+                            {
+                                NPCs_Btn_Grid.Visibility = Visibility.Visible;
+                                Encounters_Btn_Grid.Visibility = Visibility.Visible;
+                                return;
+                            }
+
+                            Search_SessionReader("MATCH (n)-[:BELONGS_TO]->(a:Adventure)-[:BELONGS_TO]->(c:Campaign) " +
+                                $"WHERE n.name CONTAINS \"{SearchText.Text}\" " +
+                                "RETURN n.name, labels(n)");
+
+                            break;
+                    }
+
+                    break;
+            }
         }
 
         private List<string> sidebar_nav_states = new List<string>();
 
         private void Back_Btn_Clicked(object sender, RoutedEventArgs e)
         {
+
+            SearchText.Text = "";
 
             sidebar_nav_states.RemoveAt(sidebar_nav_states.Count - 1);
             Secondary_st_pnl.Children.Clear();
@@ -173,7 +331,6 @@ namespace Dungeons_and_Dragons_Tracker_Planner
             Encounters_Btn_Grid.Visibility = Visibility.Collapsed;
 
             Back_Btn_Grid.Visibility = Visibility.Visible;
-            SearchText_Grid.Visibility = Visibility.Visible;
 
             var campaigns = await sessionRead("MATCH (c:Campaign) RETURN c.name");
 
@@ -196,6 +353,11 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
             current_campaign = button.Content.ToString();
 
+            if (sidebar_nav_states.Count() == 0)
+            {
+                sidebar_nav_states.Add("Campaigns");
+            }
+
             sidebar_nav_states.Add(current_campaign);
 
             Secondary_st_pnl.Children.Clear();
@@ -212,6 +374,12 @@ namespace Dungeons_and_Dragons_Tracker_Planner
             Button button = e.Source as Button;
 
             current_adventure = button.Content.ToString();
+
+            if (sidebar_nav_states.Count() == 0)
+            {
+                sidebar_nav_states.Add("Adventures");
+            }
+
             sidebar_nav_states.Add(current_adventure);
 
             Secondary_st_pnl.Children.Clear();
@@ -244,7 +412,6 @@ namespace Dungeons_and_Dragons_Tracker_Planner
                     Encounters_Btn_Grid.Visibility = Visibility.Collapsed;
 
                     Back_Btn_Grid.Visibility = Visibility.Visible;
-                    SearchText_Grid.Visibility = Visibility.Visible;
 
                     var adventures = await sessionRead("MATCH (a:Adventure) RETURN a.name");
 
@@ -292,7 +459,6 @@ namespace Dungeons_and_Dragons_Tracker_Planner
                     Encounters_Btn_Grid.Visibility = Visibility.Collapsed;
 
                     Back_Btn_Grid.Visibility = Visibility.Visible;
-                    SearchText_Grid.Visibility = Visibility.Visible;
 
                     var npcs = await sessionRead("MATCH (n:NPC) RETURN n.name");
 
@@ -350,7 +516,6 @@ namespace Dungeons_and_Dragons_Tracker_Planner
                     Encounters_Btn_Grid.Visibility = Visibility.Collapsed;
 
                     Back_Btn_Grid.Visibility = Visibility.Visible;
-                    SearchText_Grid.Visibility = Visibility.Visible;
 
                     var encounters = await sessionRead("MATCH (e:Encounter) RETURN e.name");
 
