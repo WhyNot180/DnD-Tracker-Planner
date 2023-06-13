@@ -11,7 +11,11 @@
         <Grid.Background>
             <ImageBrush ImageSource="Assets/wooden-floor-background.jpg"/>
         </Grid.Background>
-            <Grid x:Name="nav_pnl"
+        <Canvas x:Name="canvas" Background="Transparent" PreviewMouseLeftButtonDown="PreviewDown" PreviewMouseLeftButtonUp="PreviewUp" MouseMove="MoveMouse">
+            <Rectangle x:Name="Rectangle" HorizontalAlignment="Right" Fill="Black" Height="85" Stroke="Black" VerticalAlignment="Top" Width="82" Canvas.Left="500"/>
+            <Rectangle x:Name="Rectangle2" HorizontalAlignment="Right" Fill="Black" Height="85" Stroke="Black" VerticalAlignment="Top" Width="82" Canvas.Left="300"/>
+        </Canvas>
+        <Grid x:Name="nav_pnl"
               HorizontalAlignment="Left"
               Width="150"
               Background="#2E333A">

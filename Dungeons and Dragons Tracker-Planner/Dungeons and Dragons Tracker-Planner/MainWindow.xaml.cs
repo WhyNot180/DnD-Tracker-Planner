@@ -40,6 +40,8 @@ namespace Dungeons_and_Dragons_Tracker_Planner
             _driver?.Dispose();
         }
 
+        // Sidebar
+
         private int sidebar_state = 0;
 
         private async void Search_SessionReader(string query)
@@ -133,11 +135,11 @@ namespace Dungeons_and_Dragons_Tracker_Planner
                 case "Campaigns":
 
                     var campaigns = await sessionRead($"MATCH (c:Campaign) WHERE c.name CONTAINS \"{SearchText.Text}\" RETURN c.name");
-                    
+
                     Create_Content_Btns(campaigns, new RoutedEventHandler(ResultCampaign_Click));
-                    
+
                     break;
-                
+
                 case "Adventures":
 
                     var adventures = await sessionRead($"MATCH (a:Adventure) WHERE a.name CONTAINS \"{SearchText.Text}\" RETURN a.name");
@@ -173,11 +175,11 @@ namespace Dungeons_and_Dragons_Tracker_Planner
                                 return;
                             }
 
-                            Search_SessionReader("MATCH (n)-[:BELONGS_TO]->(a:Adventure)-[:BELONGS_TO]->(c:Campaign) " + 
+                            Search_SessionReader("MATCH (n)-[:BELONGS_TO]->(a:Adventure)-[:BELONGS_TO]->(c:Campaign) " +
                                 $"WHERE n.name CONTAINS \"{SearchText.Text}\" " +
                                 "RETURN n.name, labels(n)");
 
-                            Search_SessionReader("MATCH (n)-[:BELONGS_TO]->(c:Campaign) " + 
+                            Search_SessionReader("MATCH (n)-[:BELONGS_TO]->(c:Campaign) " +
                                 $"WHERE n.name CONTAINS \"{SearchText.Text}\" " +
                                 "RETURN n.name, labels(n)");
 
@@ -222,7 +224,7 @@ namespace Dungeons_and_Dragons_Tracker_Planner
                 Back_Btn_Grid.Visibility = Visibility.Collapsed;
                 return;
             }
-            
+
             switch (sidebar_nav_states.Last())
             {
                 case "Campaigns":
@@ -259,7 +261,7 @@ namespace Dungeons_and_Dragons_Tracker_Planner
                     switch (sidebar_nav_states.ElementAt(sidebar_nav_states.Count() - 2))
                     {
                         case "Campaigns":
-                            
+
                             Adventure_Btn_Grid.Visibility = Visibility.Visible;
                             NPCs_Btn_Grid.Visibility = Visibility.Visible;
                             Encounters_Btn_Grid.Visibility = Visibility.Visible;
@@ -283,22 +285,22 @@ namespace Dungeons_and_Dragons_Tracker_Planner
         {
             using (var session = _driver.AsyncSession())
             {
-            var queryResults = await session.ExecuteReadAsync(
-                async tx =>
-                {
-
-                    var resultsList = new List<string>();
-
-                    var reader = await tx.RunAsync(
-                        query);
-
-                    while (await reader.FetchAsync())
+                var queryResults = await session.ExecuteReadAsync(
+                    async tx =>
                     {
-                        resultsList.Add(reader.Current[0].ToString());
-                    }
 
-                    return resultsList;
-                });
+                        var resultsList = new List<string>();
+
+                        var reader = await tx.RunAsync(
+                            query);
+
+                        while (await reader.FetchAsync())
+                        {
+                            resultsList.Add(reader.Current[0].ToString());
+                        }
+
+                        return resultsList;
+                    });
                 return queryResults;
             }
         }
@@ -342,13 +344,13 @@ namespace Dungeons_and_Dragons_Tracker_Planner
             Campaign_Btn_Click();
 
             sidebar_nav_states.Add("Campaigns");
-            
+
         }
 
         private void ResultCampaign_Click(object sender, RoutedEventArgs e)
         {
             sidebar_state++;
-            
+
             Button button = e.Source as Button;
 
             current_campaign = button.Content.ToString();
@@ -417,8 +419,8 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
                     Create_Content_Btns(adventures, new RoutedEventHandler(ResultAdventure_Click));
 
-                    
-                    
+
+
                     break;
 
                 case 1:
@@ -444,7 +446,7 @@ namespace Dungeons_and_Dragons_Tracker_Planner
         private void Adventure_Btn_Click(object sender, RoutedEventArgs e)
         {
             Adventure_Btn_Click();
-            
+
             sidebar_nav_states.Add("Adventures");
         }
 
@@ -561,5 +563,61 @@ namespace Dungeons_and_Dragons_Tracker_Planner
             sidebar_nav_states.Add("Encounters");
 
         }
+        
+        // Flowchart
+
+        private object movingObject;
+        private List<double> firstXPos = new List<double>(), firstYPos = new List<double>();
+
+        private void PreviewDown(object sender, MouseButtonEventArgs e)
+        {
+            foreach (Rectangle rectangle in canvas.Children.OfType<Rectangle>())
+            {
+                firstXPos.Add(e.GetPosition(rectangle).X);
+                firstYPos.Add(e.GetPosition(rectangle).Y);
+            }
+            movingObject = sender;
+            
+
+        }
+        private void PreviewUp(object sender, MouseButtonEventArgs e)
+        {
+            movingObject = null;
+            firstXPos.Clear();
+            firstYPos.Clear();
+        }
+
+        private void MoveMouse(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed && sender == movingObject)
+            {
+                foreach (Rectangle rectangle in canvas.Children.OfType<Rectangle>())
+                {
+                    if (rectangle.IsMouseOver)
+                    {
+                        double newLeft = e.GetPosition(canvas).X - firstXPos.ElementAt(canvas.Children.IndexOf(rectangle)) - canvas.Margin.Left;
+
+                        rectangle.SetValue(Canvas.LeftProperty, newLeft);
+
+                        double newTop = e.GetPosition(canvas).Y - firstYPos.ElementAt(canvas.Children.IndexOf(rectangle)) - canvas.Margin.Top;
+
+                        rectangle.SetValue(Canvas.TopProperty, newTop);
+                        return;
+                    }
+                }
+
+                foreach (Rectangle rectangle in canvas.Children.OfType<Rectangle>())
+                {
+                    double newLeft = e.GetPosition(canvas).X - firstXPos.ElementAt(canvas.Children.IndexOf(rectangle)) - canvas.Margin.Left;
+
+                    rectangle.SetValue(Canvas.LeftProperty, newLeft);
+
+                    double newTop = e.GetPosition(canvas).Y - firstYPos.ElementAt(canvas.Children.IndexOf(rectangle)) - canvas.Margin.Top;
+
+                    rectangle.SetValue(Canvas.TopProperty, newTop);
+                }
+            }
+        }
+
     }
 }
