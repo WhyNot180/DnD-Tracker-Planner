@@ -51,7 +51,7 @@
                     </StackPanel.Resources>
                     
                     <Grid Style="{StaticResource sidebar_grids}" x:Name="Back_Btn_Grid" Height="40" Visibility="Collapsed">
-                        <Button x:Name="Back_Btn" Content="Back" Foreground="Beige" Margin="5,5" Width="40" Height="30" VerticalAlignment="Top" HorizontalAlignment="Left">
+                        <Button x:Name="Back_Btn" Content="Back" Foreground="Beige" Margin="5,5" Width="40" Height="30" VerticalAlignment="Top" HorizontalAlignment="Left" Click="Back_Btn_Clicked">
                             <Button.Background>
                                 <SolidColorBrush Color="Tomato"/>
                             </Button.Background>
@@ -92,6 +92,7 @@
                         <Button x:Name="Encounters_Btn"
                             Style="{StaticResource sidebar_buttons}"
                             Content="Encounters"
+                            Click="Encounter_Btn_Click"
                                 />
                     </Grid>
                     
