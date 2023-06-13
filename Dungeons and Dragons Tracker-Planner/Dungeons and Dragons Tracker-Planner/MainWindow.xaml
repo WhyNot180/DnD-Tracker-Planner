@@ -30,7 +30,6 @@
                             <Setter Property="Margin" Value="5"/>
                             <Setter Property="BorderThickness" Value="1.25"/>
                             <Setter Property="BorderBrush" Value="Gold"/>
-                            
                             <Setter Property="Background">
                                 <Setter.Value>
                                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -39,39 +38,67 @@
                                     </LinearGradientBrush>
                                 </Setter.Value>
                             </Setter>
-                            <Setter Property="FontSize" Value="15"/>
-                            <Setter Property="Foreground" Value="Maroon"/>
+                            <Setter Property="ContentTemplate">
+                                <Setter.Value>
+                                    <DataTemplate>
+                                        <Viewbox Width="120">
+                                            <TextBlock Width="70"  Text="{Binding}" Foreground="Maroon" Margin="3" TextWrapping="Wrap"/>
+                                        </Viewbox>
+                                    </DataTemplate>
+                                </Setter.Value>
+                            </Setter>
                         </Style>
                     </StackPanel.Resources>
-                    <Grid Style="{StaticResource sidebar_grids}">
-                        <TextBox Margin="5" HorizontalAlignment="Left" Height="30" Width="125" />
+                    
+                    <Grid Style="{StaticResource sidebar_grids}" x:Name="Back_Btn_Grid" Height="40" Visibility="Collapsed">
+                        <Button x:Name="Back_Btn" Content="Back" Foreground="Beige" Margin="5,5" Width="40" Height="30" VerticalAlignment="Top" HorizontalAlignment="Left" Click="Back_Btn_Clicked">
+                            <Button.Background>
+                                <SolidColorBrush Color="Tomato"/>
+                            </Button.Background>
+                        </Button>
                     </Grid>
-                    <Grid Style="{StaticResource sidebar_grids}">
+
+                    <Grid Style="{StaticResource sidebar_grids}" x:Name="SearchText_Grid">
+                        <TextBox x:Name="SearchText" Margin="5" HorizontalAlignment="Left" Height="30" Width="95" FontSize="14" TextAlignment="Left" VerticalContentAlignment="Center" TextChanged="SearchText_Changed"/>
+                        <Image Source="Assets/Search_Button.png" Stretch="Uniform" Margin="16, 9" HorizontalAlignment="Right"/>
+                    </Grid>
+
+
+
+                    <Grid Style="{StaticResource sidebar_grids}" x:Name="Campaign_Btn_Grid">
 
                         <Button x:Name="Campaign_Btn"
                             Style="{StaticResource sidebar_buttons}"
                             Content="Campaigns"
-                            />
+                            Click="Campaign_Btn_Click"
+                                />
 
                     </Grid>
-                    <Grid Style="{StaticResource sidebar_grids}">
+                    <Grid Style="{StaticResource sidebar_grids}" x:Name="Adventure_Btn_Grid">
                         <Button x:Name="Adventure_Btn"
                             Style="{StaticResource sidebar_buttons}"
                             Content="Adventures"
+                            Click="Adventure_Btn_Click"
                                 />
                     </Grid>
-                    <Grid Style="{StaticResource sidebar_grids}">
+                    <Grid Style="{StaticResource sidebar_grids}" x:Name="NPCs_Btn_Grid">
                         <Button x:Name="NPCs_Btn"
                             Style="{StaticResource sidebar_buttons}"
                             Content="NPCs"
+                            Click="NPC_Btn_Click"
                                 />
                     </Grid>
-                    <Grid Style="{StaticResource sidebar_grids}">
+                    <Grid Style="{StaticResource sidebar_grids}" x:Name="Encounters_Btn_Grid">
                         <Button x:Name="Encounters_Btn"
                             Style="{StaticResource sidebar_buttons}"
                             Content="Encounters"
+                            Click="Encounter_Btn_Click"
                                 />
                     </Grid>
+                    
+                    <StackPanel x:Name="Secondary_st_pnl"/>
+
+
                 </StackPanel>
             </ScrollViewer>
 
