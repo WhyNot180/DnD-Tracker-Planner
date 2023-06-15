@@ -572,7 +572,7 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
         private void PreviewDown(object sender, MouseButtonEventArgs e)
         {
-            foreach (Grid chartEntity in canvas.Children.OfType<Grid>())
+            foreach (Grid chartEntity in container_canvas.Children.OfType<Grid>())
             {
                 if (chartEntity.IsMouseOver) entityClicked = chartEntity;
                 firstXPos.Add(e.GetPosition(chartEntity).X);
@@ -593,6 +593,15 @@ namespace Dungeons_and_Dragons_Tracker_Planner
         private void Zoom(object sender, MouseWheelEventArgs e)
         {
             
+            var position = e.GetPosition(container_canvas);
+            var scale = e.Delta >= 0 ? 1.1 : (1.0 / 1.1); // choose appropriate scaling factor
+
+            var transform = (MatrixTransform)container_canvas.RenderTransform;
+            var matrix = transform.Matrix;
+            matrix.ScaleAtPrepend(scale, scale, position.X, position.Y);
+            container_canvas.RenderTransform = new MatrixTransform(matrix);
+            
+            
         }
 
         private void MoveMouse(object sender, MouseEventArgs e)
@@ -602,23 +611,23 @@ namespace Dungeons_and_Dragons_Tracker_Planner
                 
                 if (entityClicked != null)
                 {
-                    double newLeft = e.GetPosition(canvas).X - firstXPos.ElementAt(canvas.Children.IndexOf(entityClicked)) - canvas.Margin.Left;
+                    double newLeft = e.GetPosition(container_canvas).X - firstXPos.ElementAt(container_canvas.Children.IndexOf(entityClicked)) - canvas.Margin.Left;
 
                     entityClicked.SetValue(Canvas.LeftProperty, newLeft);
 
-                    double newTop = e.GetPosition(canvas).Y - firstYPos.ElementAt(canvas.Children.IndexOf(entityClicked)) - canvas.Margin.Top;
+                    double newTop = e.GetPosition(container_canvas).Y - firstYPos.ElementAt(container_canvas.Children.IndexOf(entityClicked)) - canvas.Margin.Top;
 
                     entityClicked.SetValue(Canvas.TopProperty, newTop);
                     return;
                 }
 
-                foreach (Grid chartEntity in canvas.Children.OfType<Grid>())
+                foreach (Grid chartEntity in container_canvas.Children.OfType<Grid>())
                 {
-                    double newLeft = e.GetPosition(canvas).X - firstXPos.ElementAt(canvas.Children.IndexOf(chartEntity)) - canvas.Margin.Left;
+                    double newLeft = e.GetPosition(container_canvas).X - firstXPos.ElementAt(container_canvas.Children.IndexOf(chartEntity)) - canvas.Margin.Left;
 
                     chartEntity.SetValue(Canvas.LeftProperty, newLeft);
 
-                    double newTop = e.GetPosition(canvas).Y - firstYPos.ElementAt(canvas.Children.IndexOf(chartEntity)) - canvas.Margin.Top;
+                    double newTop = e.GetPosition(container_canvas).Y - firstYPos.ElementAt(container_canvas.Children.IndexOf(chartEntity)) - canvas.Margin.Top;
 
                     chartEntity.SetValue(Canvas.TopProperty, newTop);
                 }

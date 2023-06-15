@@ -35,26 +35,40 @@
                     <Setter Property="FontSize" Value="20"/>
                     <Setter Property="TextAlignment" Value="Center"/>
                 </Style>
+                <Style x:Key="chart_grid" TargetType="Grid">
+                    <Setter Property="RenderTransform">
+                        <Setter.Value>
+                            <MatrixTransform/>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Width" Value="250"/>
+                    <Setter Property="Height" Value="100"/>
+                </Style>
             </Canvas.Resources>
-            <Grid Canvas.Left="200" Canvas.Top="100" Width="247" Height="104" >
-                <Viewbox Style="{StaticResource chart_poly_viewbox}">
-                    <Polygon Style="{StaticResource chart_poly}"/>
-                </Viewbox>
+            <Canvas x:Name="container_canvas">
+                <Grid Style="{StaticResource chart_grid}" Canvas.Left="200" Canvas.Top="100">
+                
+                    <Viewbox Style="{StaticResource chart_poly_viewbox}">
+                        <Polygon Style="{StaticResource chart_poly}"/>
+                    </Viewbox>
+                
+                    <Viewbox Style="{StaticResource chart_text_viewbox}">
+                        <TextBlock Style="{StaticResource chart_text}" Text="Hello"/>
+                    </Viewbox>
+                </Grid>
+                <Grid Style="{StaticResource chart_grid}" Canvas.Left="500" Canvas.Top="100">
+                
+                    <Viewbox Stretch="Fill">
+                        <Polygon x:Name="Test2" Fill="Beige" Points="0, 50 50, 0 200, 0 250, 50 200, 100 50, 100"  Stroke="OliveDrab" StrokeThickness="5"/>
+                    </Viewbox>
 
-                <Viewbox Style="{StaticResource chart_text_viewbox}">
-                    <TextBlock Style="{StaticResource chart_text}" Text="Hello"/>
-                </Viewbox>
-            </Grid>
-            <Grid Canvas.Left="500" Canvas.Top="100" Width="247" Height="104">
+                    <Viewbox Margin="30, 30" Stretch="Fill" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <TextBlock Width="100" Text="Hi" TextWrapping="Wrap" FontSize="20" TextAlignment="Center"/>
+                    </Viewbox>
+                </Grid>
+            </Canvas>
+            
 
-                <Viewbox Stretch="Fill">
-                    <Polygon x:Name="Test2" Fill="Beige" Points="0, 50 50, 0 200, 0 250, 50 200, 100 50, 100"  Stroke="OliveDrab" StrokeThickness="5"/>
-                </Viewbox>
-
-                <Viewbox Margin="30, 30" Stretch="Fill" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                    <TextBlock Width="100" Text="Hi" TextWrapping="Wrap" FontSize="20" TextAlignment="Center"/>
-                </Viewbox>
-            </Grid>
 
         </Canvas>
         <Grid x:Name="nav_pnl"
