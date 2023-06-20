@@ -6,16 +6,54 @@
         xmlns:local="clr-namespace:Dungeons_and_Dragons_Tracker_Planner"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    
+
     <Grid>
         <Grid.Background>
             <ImageBrush ImageSource="Assets/wooden-floor-background.jpg"/>
         </Grid.Background>
-            <Grid x:Name="nav_pnl"
+        <Canvas x:Name="canvas" Background="Transparent" PreviewMouseLeftButtonDown="PreviewDown" PreviewMouseLeftButtonUp="PreviewUp" MouseMove="MoveMouse" PreviewMouseWheel="Zoom">
+            <Canvas.Resources>
+                <Style x:Key="chart_poly_viewbox" TargetType="Viewbox">
+                    <Setter Property="Stretch" Value="Fill"/>
+                </Style>
+                <Style x:Key="chart_poly" TargetType="Polygon">
+                    <Setter Property="Fill" Value="Beige"/>
+                    <Setter Property="Points" Value="0, 50 50, 0 200, 0 250, 50 200, 100 50, 100"/>
+                    <Setter Property="Stroke" Value="OliveDrab"/>
+                    <Setter Property="StrokeThickness" Value="5"/>
+                </Style>
+                <Style x:Key="chart_text_viewbox" TargetType="Viewbox">
+                    <Setter Property="Margin" Value="30, 30"/>
+                </Style>
+                <Style x:Key="chart_text" TargetType="TextBlock">
+                    <Setter Property="Width" Value="100"/>
+                    <Setter Property="Text" Value="{Binding}"/>
+                    <Setter Property="TextWrapping" Value="Wrap"/>
+                    <Setter Property="FontSize" Value="20"/>
+                    <Setter Property="TextAlignment" Value="Center"/>
+                </Style>
+                <Style x:Key="chart_grid" TargetType="Grid">
+                    <Setter Property="RenderTransform">
+                        <Setter.Value>
+                            <MatrixTransform/>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Width" Value="250"/>
+                    <Setter Property="Height" Value="100"/>
+                </Style>
+            </Canvas.Resources>
+            <Canvas x:Name="container_canvas">
+
+            </Canvas>
+            
+
+
+        </Canvas>
+        <Grid x:Name="nav_pnl"
               HorizontalAlignment="Left"
               Width="150"
               Background="#2E333A">
-            
+
             <ScrollViewer x:Name="sv_pnl" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
                 <StackPanel x:Name="st_pnl">
                     <StackPanel.Resources>
@@ -49,7 +87,7 @@
                             </Setter>
                         </Style>
                     </StackPanel.Resources>
-                    
+
                     <Grid Style="{StaticResource sidebar_grids}" x:Name="Back_Btn_Grid" Height="40" Visibility="Collapsed">
                         <Button x:Name="Back_Btn" Content="Back" Foreground="Beige" Margin="5,5" Width="40" Height="30" VerticalAlignment="Top" HorizontalAlignment="Left" Click="Back_Btn_Clicked">
                             <Button.Background>
@@ -95,7 +133,7 @@
                             Click="Encounter_Btn_Click"
                                 />
                     </Grid>
-                    
+
                     <StackPanel x:Name="Secondary_st_pnl"/>
 
 
