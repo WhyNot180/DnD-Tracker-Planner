@@ -24,9 +24,6 @@
                 </Style>
                 <Style x:Key="chart_text_viewbox" TargetType="Viewbox">
                     <Setter Property="Margin" Value="30, 30"/>
-                    <Setter Property="Stretch" Value="Fill"/>
-                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
-                    <Setter Property="VerticalAlignment" Value="Stretch"/>
                 </Style>
                 <Style x:Key="chart_text" TargetType="TextBlock">
                     <Setter Property="Width" Value="100"/>
@@ -46,26 +43,7 @@
                 </Style>
             </Canvas.Resources>
             <Canvas x:Name="container_canvas">
-                <Grid Style="{StaticResource chart_grid}" Canvas.Left="200" Canvas.Top="100">
-                
-                    <Viewbox Style="{StaticResource chart_poly_viewbox}">
-                        <Polygon Style="{StaticResource chart_poly}"/>
-                    </Viewbox>
-                
-                    <Viewbox Style="{StaticResource chart_text_viewbox}">
-                        <TextBlock Style="{StaticResource chart_text}" Text="Hello"/>
-                    </Viewbox>
-                </Grid>
-                <Grid Style="{StaticResource chart_grid}" Canvas.Left="500" Canvas.Top="100">
-                
-                    <Viewbox Stretch="Fill">
-                        <Polygon x:Name="Test2" Fill="Beige" Points="0, 50 50, 0 200, 0 250, 50 200, 100 50, 100"  Stroke="OliveDrab" StrokeThickness="5"/>
-                    </Viewbox>
 
-                    <Viewbox Margin="30, 30" Stretch="Fill" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                        <TextBlock Width="100" Text="Hi" TextWrapping="Wrap" FontSize="20" TextAlignment="Center"/>
-                    </Viewbox>
-                </Grid>
             </Canvas>
             
 
