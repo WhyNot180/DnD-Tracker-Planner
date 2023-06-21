@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Neo4j.Driver;
 
@@ -23,6 +16,8 @@ namespace Dungeons_and_Dragons_Tracker_Planner
     /// </summary>
     public partial class MainWindow : Window
     {
+
+        // Neo4j .net driver
         private IDriver _driver;
 
         public void GraphDriver_Init(string uri)
@@ -45,11 +40,12 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
         private int sidebar_state = 0;
 
+        // Reads from the database and creates a button in the sidebar for each result
         private async void Search_SessionReader(string query)
         {
             var results = await sessionRead(query, 2);
 
-            for (var i = 0; i < results.ElementAt(0).Count; i++)
+            for (var i = 0; i < results[0].Count; i++)
             {
                 Grid grid = new Grid();
                 Button button = new Button();
@@ -57,26 +53,22 @@ namespace Dungeons_and_Dragons_Tracker_Planner
                 grid.Children.Add(button);
                 grid.Style = (Style)st_pnl.FindResource("sidebar_grids");
                 button.Style = (Style)st_pnl.FindResource("sidebar_buttons");
-                button.Content = results.ElementAt(0).ElementAt(i);
-                if (results.ElementAt(1).ElementAt(i).Equals("Campaign"))
+                button.Content = results[0][i];
+
+                switch (results[1][i])
                 {
-                    button.Click += ResultCampaign_Click;
-                }
-                else if (results.ElementAt(1).ElementAt(i).Equals("Adventure"))
-                {
-                    button.Click += ResultAdventure_Click;
-                }
-                else if (results.ElementAt(1).ElementAt(i).Equals("NPC"))
-                {
-                    button.Click += ResultNPC_Click;
-                }
-                else if (results.ElementAt(1).ElementAt(i).Equals("Encounter"))
-                {
-                    button.Click += ResultEncounter_Click;
+                    case "Campaign":
+                        button.Click += ResultCampaign_Click;
+                        break;
+
+                    case "Adventure":
+                        button.Click += ResultAdventure_Click;
+                        break;
                 }
             }
         }
 
+        // Eventhandler for search bar
         private async void SearchText_Changed(object sender, RoutedEventArgs e)
         {
 
@@ -113,7 +105,7 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
                     var campaigns = await sessionRead($"MATCH (c:Campaign) WHERE c.name CONTAINS \"{SearchText.Text}\" RETURN c.name", 1);
 
-                    Create_Content_Btns(campaigns.ElementAt(0), new RoutedEventHandler(ResultCampaign_Click));
+                    Create_Content_Btns(campaigns[0], new RoutedEventHandler(ResultCampaign_Click));
 
                     break;
 
@@ -121,21 +113,21 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
                     var adventures = await sessionRead($"MATCH (a:Adventure) WHERE a.name CONTAINS \"{SearchText.Text}\" RETURN a.name", 1);
 
-                    Create_Content_Btns(adventures.ElementAt(0), new RoutedEventHandler(ResultAdventure_Click));
+                    Create_Content_Btns(adventures[0], new RoutedEventHandler(ResultAdventure_Click));
 
                     break;
                 case "NPCs":
 
                     var npcs = await sessionRead($"MATCH (n:NPC) WHERE n.name CONTAINS \"{SearchText.Text}\" RETURN n.name", 1);
 
-                    Create_Content_Btns(npcs.ElementAt(0), new RoutedEventHandler(ResultNPC_Click));
+                    Create_Content_Btns(npcs[0], null);
 
                     break;
                 case "Encounters":
 
                     var encounters = await sessionRead($"MATCH (e:Encounter) WHERE e.name CONTAINS \"{SearchText.Text}\" RETURN e.name", 1);
 
-                    Create_Content_Btns(encounters.ElementAt(0), new RoutedEventHandler(ResultEncounter_Click));
+                    Create_Content_Btns(encounters[0], null);
 
                     break;
                 default:
@@ -152,13 +144,13 @@ namespace Dungeons_and_Dragons_Tracker_Planner
                                 return;
                             }
 
-                            Search_SessionReader("MATCH (n)-[:BELONGS_TO]->(a:Adventure)-[:BELONGS_TO]->(c:Campaign) " +
-                                $"WHERE n.name CONTAINS \"{SearchText.Text}\" " +
-                                "RETURN n.name, labels(n)");
+                            Search_SessionReader($@"MATCH (n)-[:BELONGS_TO]->(a:Adventure)-[:BELONGS_TO]->(c:Campaign) 
+                                WHERE n.name CONTAINS ""{SearchText.Text}""
+                                RETURN n.name, labels(n)");
 
-                            Search_SessionReader("MATCH (n)-[:BELONGS_TO]->(c:Campaign) " +
-                                $"WHERE n.name CONTAINS \"{SearchText.Text}\" " +
-                                "RETURN n.name, labels(n)");
+                            Search_SessionReader($@"MATCH (n)-[:BELONGS_TO]->(c:Campaign) 
+                                WHERE n.name CONTAINS ""{SearchText.Text}""
+                                RETURN n.name, labels(n)");
 
                             break;
                         case "Adventures":
@@ -170,9 +162,9 @@ namespace Dungeons_and_Dragons_Tracker_Planner
                                 return;
                             }
 
-                            Search_SessionReader("MATCH (n)-[:BELONGS_TO]->(a:Adventure)-[:BELONGS_TO]->(c:Campaign) " +
-                                $"WHERE n.name CONTAINS \"{SearchText.Text}\" " +
-                                "RETURN n.name, labels(n)");
+                            Search_SessionReader($@"MATCH (n)-[:BELONGS_TO]->(a:Adventure)-[:BELONGS_TO]->(c:Campaign) 
+                                WHERE n.name CONTAINS ""{SearchText.Text}""
+                                RETURN n.name, labels(n)");
 
                             break;
                     }
@@ -258,6 +250,7 @@ namespace Dungeons_and_Dragons_Tracker_Planner
             }
         }
 
+        // Generic read from database
         private async Task<List<List<string>>> sessionRead(string query, int numberOfColumns)
         {
             using (var session = _driver.AsyncSession())
@@ -281,9 +274,9 @@ namespace Dungeons_and_Dragons_Tracker_Planner
                             {
                                 if (reader.Current[i] != null)
                                 {
-                                    resultsList.ElementAt(i).Add(reader.Current[i].ToString());
+                                    resultsList[i].Add(reader.Current[i].ToString());
                                 }
-                                else resultsList.ElementAt(i).Add(null);
+                                else resultsList[i].Add(null);
                             }
                         }
 
@@ -293,6 +286,7 @@ namespace Dungeons_and_Dragons_Tracker_Planner
             }
         }
 
+        // Creates sidebar buttons from names list and assigns a provided eventhandler
         private void Create_Content_Btns(List<string> names, RoutedEventHandler eventHandler)
         {
             foreach (var name in names)
@@ -304,13 +298,13 @@ namespace Dungeons_and_Dragons_Tracker_Planner
                 grid.Style = (Style)st_pnl.FindResource("sidebar_grids");
                 button.Style = (Style)st_pnl.FindResource("sidebar_buttons");
                 button.Content = name;
-                button.Click += eventHandler;
+                if (eventHandler != null) button.Click += eventHandler;
             }
         }
 
         private List<PathPair> pathGrids = new List<PathPair>();
 
-        private void Create_Chart_Entries(List<string> names, List<string> secondary_names, List<string> relationships)
+        private void Create_Chart_Entries(List<string> names)
         {
             container_canvas.Children.Clear();
             pathGrids.Clear();
@@ -323,7 +317,6 @@ namespace Dungeons_and_Dragons_Tracker_Planner
                 Viewbox text_view = new Viewbox();
                 Polygon poly = new Polygon();
                 TextBlock text = new TextBlock();
-
                 
                 container_canvas.Children.Add(grid);
                 grid.Name = name.Replace(" ", "_").Replace(":", "");
@@ -346,10 +339,17 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
             }
 
-            for (var i = 0; i < names.Count; i++)
+            
+        }
+
+        private void Create_Chart_Lines(List<string> secondary_names, List<string> relationships)
+        {
+            pathGrids.Clear();
+
+            for (var i = 0; i < container_canvas.Children.OfType<Grid>().Count(); i++)
             {
                 var grid = container_canvas.Children.OfType<Grid>().ElementAt(i);
-                if (relationships?.ElementAtOrDefault(i) != null && secondary_names?.ElementAtOrDefault(i) != null)
+                if (relationships.ElementAtOrDefault(i) != null && secondary_names.ElementAtOrDefault(i) != null)
                 {
 
                     Path path = new Path();
@@ -360,9 +360,12 @@ namespace Dungeons_and_Dragons_Tracker_Planner
                     line.StartPoint = new System.Windows.Point((double)grid.GetValue(Canvas.LeftProperty) + grid.Width/2, (double)grid.GetValue(Canvas.TopProperty) + grid.Height/2);
                     line.EndPoint = new System.Windows.Point((double)secondaryGrid.GetValue(Canvas.LeftProperty) + secondaryGrid.Width/2, (double)secondaryGrid.GetValue(Canvas.TopProperty) + secondaryGrid.Height/2);
                     path.Data = line;
+                    
                     path.Stroke = Brushes.Black;
                     path.StrokeThickness = 5;
+                    
                     Panel.SetZIndex(path, 0);
+                    
                     pathGrids.Add(new PathPair(path, grid, secondaryGrid));
                 }
             }
@@ -382,9 +385,9 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
             var campaigns = await sessionRead("MATCH (c:Campaign) RETURN c.name", 1);
 
-            Create_Chart_Entries(campaigns.ElementAt(0), null, null);
+            Create_Chart_Entries(campaigns[0]);
 
-            Create_Content_Btns(campaigns.ElementAt(0), new RoutedEventHandler(ResultCampaign_Click));
+            Create_Content_Btns(campaigns[0], new RoutedEventHandler(ResultCampaign_Click));
         }
 
         private void Campaign_Btn_Click(object sender, RoutedEventArgs e)
@@ -437,22 +440,11 @@ namespace Dungeons_and_Dragons_Tracker_Planner
             Encounters_Btn_Grid.Visibility = Visibility.Visible;
         }
 
-        private void ResultNPC_Click(object sender, RoutedEventArgs e)
-        {
-            Button button = e.Source as Button;
-
-        }
-
-        private void ResultEncounter_Click(object sender, RoutedEventArgs e)
-        {
-            Button button = e.Source as Button;
-
-        }
-
         private async void Adventure_Btn_Click()
         {
             switch (sidebar_state)
             {
+                // If Button is pressed from root
                 case 0:
                     Campaign_Btn_Grid.Visibility = Visibility.Collapsed;
                     Adventure_Btn_Grid.Visibility = Visibility.Collapsed;
@@ -463,27 +455,32 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
                     var adventures = await sessionRead("MATCH (a:Adventure) OPTIONAL MATCH (a)-[r]->(b:Adventure) RETURN a.name, b.name, type(r)", 3);
 
-                    Create_Chart_Entries(adventures.ElementAt(0), adventures.ElementAt(1), adventures.ElementAt(2));
+                    Create_Chart_Entries(adventures[0]);
 
-                    Create_Content_Btns(adventures.ElementAt(0), new RoutedEventHandler(ResultAdventure_Click));
+                    Create_Chart_Lines(adventures[1], adventures[2]);
+
+                    Create_Content_Btns(adventures[0], new RoutedEventHandler(ResultAdventure_Click));
 
 
 
                     break;
 
+                // If button is pressed from campaign
                 case 1:
                     Adventure_Btn_Grid.Visibility = Visibility.Collapsed;
                     NPCs_Btn_Grid.Visibility = Visibility.Collapsed;
                     Encounters_Btn_Grid.Visibility = Visibility.Collapsed;
 
-                    var campaign_adventures = await sessionRead("MATCH (a:Adventure)-[:BELONGS_TO]->(c:Campaign) " +
-                                    $"WHERE c.name = \"{current_campaign}\" " +
-                                    "OPTIONAL MATCH (a)-[r]->(b:Adventure) " +
-                                    "RETURN a.name, b.name, type(r)", 3);
+                    var campaign_adventures = await sessionRead($@"MATCH (a:Adventure)-[:BELONGS_TO]->(c:Campaign) 
+                                    WHERE c.name = ""{current_campaign}"" 
+                                    OPTIONAL MATCH (a)-[r]->(b:Adventure) 
+                                    RETURN a.name, b.name, type(r)", 3);
 
-                    Create_Chart_Entries(campaign_adventures.ElementAt(0), campaign_adventures.ElementAt(1), campaign_adventures.ElementAt(2));
+                    Create_Chart_Entries(campaign_adventures[0]);
 
-                    Create_Content_Btns(campaign_adventures.ElementAt(0), new RoutedEventHandler(ResultAdventure_Click));
+                    Create_Chart_Lines(campaign_adventures[1], campaign_adventures[2]);
+
+                    Create_Content_Btns(campaign_adventures[0], new RoutedEventHandler(ResultAdventure_Click));
 
                     break;
 
@@ -505,6 +502,7 @@ namespace Dungeons_and_Dragons_Tracker_Planner
         {
             switch (sidebar_state)
             {
+                // If button is pressed from root
                 case 0:
                     Campaign_Btn_Grid.Visibility = Visibility.Collapsed;
                     Adventure_Btn_Grid.Visibility = Visibility.Collapsed;
@@ -515,40 +513,48 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
                     var npcs = await sessionRead("MATCH (n:NPC) OPTIONAL MATCH (n)-[r]->(b:NPC) RETURN n.name, b.name, type(r)", 3);
 
-                    Create_Chart_Entries(npcs.ElementAt(0), npcs.ElementAt(1), npcs.ElementAt(2));
+                    Create_Chart_Entries(npcs[0]);
 
-                    Create_Content_Btns(npcs.ElementAt(0), new RoutedEventHandler(ResultNPC_Click));
+                    Create_Chart_Lines(npcs[1], npcs[2]);
+
+                    Create_Content_Btns(npcs[0], null);
 
                     break;
 
+                // If button is pressed from Campaign
                 case 1:
                     Adventure_Btn_Grid.Visibility = Visibility.Collapsed;
                     NPCs_Btn_Grid.Visibility = Visibility.Collapsed;
                     Encounters_Btn_Grid.Visibility = Visibility.Collapsed;
 
-                    var campaign_npcs = await sessionRead("MATCH (n:NPC)-[:BELONGS_TO]->(a:Adventure)-[:BELONGS_TO]->(c:Campaign) " +
-                                    $"WHERE c.name = \"{current_campaign}\" " +
-                                    "OPTIONAL MATCH (n)-[r]->(b:NPC) " +
-                                    "RETURN n.name, b.name, type(r)", 3);
+                    var campaign_npcs = await sessionRead($@"MATCH (n:NPC)-[:BELONGS_TO]->(a:Adventure)-[:BELONGS_TO]->(c:Campaign) 
+                                    WHERE c.name = ""{current_campaign}"" 
+                                    OPTIONAL MATCH (n)-[r]->(b:NPC) 
+                                    RETURN n.name, b.name, type(r)", 3);
 
-                    Create_Chart_Entries(campaign_npcs.ElementAt(0), campaign_npcs.ElementAt(1), campaign_npcs.ElementAt(2));
+                    Create_Chart_Entries(campaign_npcs[0]);
 
-                    Create_Content_Btns(campaign_npcs.ElementAt(0), new RoutedEventHandler(ResultNPC_Click));
+                    Create_Chart_Lines(campaign_npcs[1], campaign_npcs[2]);
+
+                    Create_Content_Btns(campaign_npcs[0], null);
 
                     break;
-
+                    
+                // If button is pressed from adventure
                 case 2:
                     NPCs_Btn_Grid.Visibility = Visibility.Collapsed;
                     Encounters_Btn_Grid.Visibility = Visibility.Collapsed;
 
-                    var adventure_npcs = await sessionRead("MATCH (n:NPC)-[:BELONGS_TO]->(a:Adventure) " +
-                                    $"WHERE a.name = \"{current_adventure}\" " +
-                                    "OPTIONAL MATCH (n)-[r]->(b:NPC) " +
-                                    "RETURN n.name, b.name, type(r)", 3);
+                    var adventure_npcs = await sessionRead($@"MATCH (n:NPC)-[:BELONGS_TO]->(a:Adventure) 
+                                    WHERE a.name = ""{current_adventure}"" 
+                                    OPTIONAL MATCH (n)-[r]->(b:NPC) 
+                                    RETURN n.name, b.name, type(r)", 3);
 
-                    Create_Chart_Entries(adventure_npcs.ElementAt(0), adventure_npcs.ElementAt(1), adventure_npcs.ElementAt(2));
+                    Create_Chart_Entries(adventure_npcs[0]);
 
-                    Create_Content_Btns(adventure_npcs.ElementAt(0), new RoutedEventHandler(ResultNPC_Click));
+                    Create_Chart_Lines(adventure_npcs[1], adventure_npcs[2]);
+
+                    Create_Content_Btns(adventure_npcs[0], null);
 
                     break;
 
@@ -570,6 +576,7 @@ namespace Dungeons_and_Dragons_Tracker_Planner
         {
             switch (sidebar_state)
             {
+                // If button is pressed from root
                 case 0:
                     Campaign_Btn_Grid.Visibility = Visibility.Collapsed;
                     Adventure_Btn_Grid.Visibility = Visibility.Collapsed;
@@ -580,40 +587,48 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
                     var encounters = await sessionRead("MATCH (e:Encounter) OPTIONAL MATCH (e)-[r]->(b:Encounter) RETURN e.name, b.name, type(r)", 3);
 
-                    Create_Chart_Entries(encounters.ElementAt(0), encounters.ElementAt(1), encounters.ElementAt(2));
+                    Create_Chart_Entries(encounters[0]);
 
-                    Create_Content_Btns(encounters.ElementAt(0), new RoutedEventHandler(ResultNPC_Click));
+                    Create_Chart_Lines(encounters[1], encounters[2]);
+
+                    Create_Content_Btns(encounters[0], null);
 
                     break;
-
+                
+                // If button is pressed from Campaign
                 case 1:
                     Adventure_Btn_Grid.Visibility = Visibility.Collapsed;
                     NPCs_Btn_Grid.Visibility = Visibility.Collapsed;
                     Encounters_Btn_Grid.Visibility = Visibility.Collapsed;
 
-                    var campaign_encounters = await sessionRead("MATCH (e:Encounter)-[:BELONGS_TO]->(a:Adventure)-[:BELONGS_TO]->(c:Campaign) " +
-                                    $"WHERE c.name = \"{current_campaign}\" " +
-                                    "OPTIONAL MATCH (e)-[r]->(b:Encounter) " +
-                                    "RETURN e.name, b.name, type(r)", 3);
+                    var campaign_encounters = await sessionRead($@"MATCH (e:Encounter)-[:BELONGS_TO]->(a:Adventure)-[:BELONGS_TO]->(c:Campaign) 
+                                    WHERE c.name = ""{current_campaign}"" 
+                                    OPTIONAL MATCH (e)-[r]->(b:Encounter) 
+                                    RETURN e.name, b.name, type(r)", 3);
 
-                    Create_Chart_Entries(campaign_encounters.ElementAt(0), campaign_encounters.ElementAt(1), campaign_encounters.ElementAt(2));
+                    Create_Chart_Entries(campaign_encounters[0]);
 
-                    Create_Content_Btns(campaign_encounters.ElementAt(0), new RoutedEventHandler(ResultNPC_Click));
+                    Create_Chart_Lines(campaign_encounters[1], campaign_encounters[2]);
+
+                    Create_Content_Btns(campaign_encounters[0], null);
 
                     break;
 
+                // If button is pressed from adventure
                 case 2:
                     NPCs_Btn_Grid.Visibility = Visibility.Collapsed;
                     Encounters_Btn_Grid.Visibility = Visibility.Collapsed;
 
-                    var adventure_encounters = await sessionRead("MATCH (e:Encounter)-[:BELONGS_TO]->(a:Adventure) " +
-                                    $"WHERE a.name = \"{current_adventure}\" " +
-                                    "OPTIONAL MATCH (e)-[r]->(b:Encounter) " +
-                                    "RETURN e.name, b.name, type(r)", 3);
+                    var adventure_encounters = await sessionRead($@"MATCH (e:Encounter)-[:BELONGS_TO]->(a:Adventure) 
+                                    WHERE a.name = ""{current_adventure}"" 
+                                    OPTIONAL MATCH (e)-[r]->(b:Encounter) 
+                                    RETURN e.name, b.name, type(r)", 3);
 
-                    Create_Chart_Entries(adventure_encounters.ElementAt(0), adventure_encounters.ElementAt(1), adventure_encounters.ElementAt(2));
+                    Create_Chart_Entries(adventure_encounters[0]);
 
-                    Create_Content_Btns(adventure_encounters.ElementAt(0), new RoutedEventHandler(ResultNPC_Click));
+                    Create_Chart_Lines(adventure_encounters[1], adventure_encounters[2]);
+
+                    Create_Content_Btns(adventure_encounters[0], null);
 
                     break;
 
@@ -633,9 +648,15 @@ namespace Dungeons_and_Dragons_Tracker_Planner
         
         // Flowchart
 
+        // The container object (container_canvas)
         private object movingObject;
+
+        // Initial x and y of chartEntries
         private List<double> firstXPos = new List<double>(), firstYPos = new List<double>();
+
+        // Initial line properties of chartPaths
         private List<LineGeometry> firstLine = new List<LineGeometry>();
+
         private Grid entityClicked;
 
         private void PreviewDown(object sender, MouseButtonEventArgs e)
@@ -670,11 +691,11 @@ namespace Dungeons_and_Dragons_Tracker_Planner
         {
             
             var position = e.GetPosition(container_canvas);
-            var scale = e.Delta >= 0 ? 1.1 : (1.0 / 1.1); // choose appropriate scaling factor
+            var scale = e.Delta >= 0 ? 1.1 : (1.0 / 1.1); // Scales by 1.1 each time scrolling is detected
 
             var transform = (MatrixTransform)container_canvas.RenderTransform;
             var matrix = transform.Matrix;
-            matrix.ScaleAtPrepend(scale, scale, position.X, position.Y);
+            matrix.ScaleAtPrepend(scale, scale, position.X, position.Y); // Scales at mouse position
             container_canvas.RenderTransform = new MatrixTransform(matrix);
             
             
@@ -685,6 +706,7 @@ namespace Dungeons_and_Dragons_Tracker_Planner
             if (e.LeftButton == MouseButtonState.Pressed && sender == movingObject)
             {
                 
+                // If entity is being dragged or everything is
                 if (entityClicked != null)
                 {
                     double newLeft = e.GetPosition(container_canvas).X - firstXPos.ElementAt(container_canvas.Children.IndexOf(entityClicked)) - canvas.Margin.Left;
@@ -699,9 +721,12 @@ namespace Dungeons_and_Dragons_Tracker_Planner
                     {
                         LineGeometry line = firstLine.ElementAt(container_canvas.Children.IndexOf(pathGrid.path) - container_canvas.Children.OfType<Grid>().Count());
 
+                        // Offset is required, as origin of path changes when they are moved
+                        // Left and Top properties return NaN when initialized
                         double leftOffset =  !Double.IsNaN((double)pathGrid.path.GetValue(Canvas.LeftProperty)) ? (double)pathGrid.path.GetValue(Canvas.LeftProperty) : 0;
                         double topOffset = !Double.IsNaN((double)pathGrid.path.GetValue(Canvas.TopProperty)) ? (double)pathGrid.path.GetValue(Canvas.TopProperty) : 0;
 
+                        // Places start/end point at same position as chartEntry
                         if (pathGrid.primaryGrid == entityClicked)
                         {
                             line.StartPoint = new System.Windows.Point(newLeft + entityClicked.Width/2 - leftOffset, newTop + entityClicked.Height/2 - topOffset);
@@ -717,6 +742,7 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
                     return;
                 }
+
 
                 foreach (Grid chartEntity in container_canvas.Children.OfType<Grid>())
                 {
