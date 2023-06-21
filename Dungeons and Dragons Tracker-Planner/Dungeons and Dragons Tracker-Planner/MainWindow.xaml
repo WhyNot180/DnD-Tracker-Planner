@@ -8,23 +8,31 @@
         Title="MainWindow" Height="450" Width="800">
 
     <Grid>
+        
         <Grid.Background>
             <ImageBrush ImageSource="Assets/wooden-floor-background.jpg"/>
         </Grid.Background>
+        
+        <!--Main canvas-->
         <Canvas x:Name="canvas" Background="Transparent" PreviewMouseLeftButtonDown="PreviewDown" PreviewMouseLeftButtonUp="PreviewUp" MouseMove="MoveMouse" PreviewMouseWheel="Zoom">
+            
             <Canvas.Resources>
+                
                 <Style x:Key="chart_poly_viewbox" TargetType="Viewbox">
                     <Setter Property="Stretch" Value="Fill"/>
                 </Style>
+                
                 <Style x:Key="chart_poly" TargetType="Polygon">
                     <Setter Property="Fill" Value="Beige"/>
                     <Setter Property="Points" Value="0, 50 50, 0 200, 0 250, 50 200, 100 50, 100"/>
                     <Setter Property="Stroke" Value="OliveDrab"/>
                     <Setter Property="StrokeThickness" Value="5"/>
                 </Style>
+                
                 <Style x:Key="chart_text_viewbox" TargetType="Viewbox">
                     <Setter Property="Margin" Value="30, 30"/>
                 </Style>
+                
                 <Style x:Key="chart_text" TargetType="TextBlock">
                     <Setter Property="Width" Value="100"/>
                     <Setter Property="Text" Value="{Binding}"/>
@@ -32,6 +40,7 @@
                     <Setter Property="FontSize" Value="20"/>
                     <Setter Property="TextAlignment" Value="Center"/>
                 </Style>
+                
                 <Style x:Key="chart_grid" TargetType="Grid">
                     <Setter Property="RenderTransform">
                         <Setter.Value>
@@ -41,25 +50,31 @@
                     <Setter Property="Width" Value="250"/>
                     <Setter Property="Height" Value="100"/>
                 </Style>
+                
             </Canvas.Resources>
+            
+            <!--Canvas for containing elements. Resized in order to create a "zooming" effect-->
             <Canvas x:Name="container_canvas">
-
             </Canvas>
             
-
-
         </Canvas>
+        
+        <!--Sidebar panel-->
         <Grid x:Name="nav_pnl"
               HorizontalAlignment="Left"
               Width="150"
               Background="#2E333A">
-
+            
             <ScrollViewer x:Name="sv_pnl" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
+                
                 <StackPanel x:Name="st_pnl">
+                    
                     <StackPanel.Resources>
+                        
                         <Style x:Key="sidebar_grids" TargetType="Grid">
                             <Setter Property="Height" Value="50"/>
                         </Style>
+                        
                         <Style x:Key="sidebar_buttons" TargetType="Button">
                             <Setter Property="VerticalAlignment" Value="Center"/>
                             <Setter Property="HorizontalAlignment" Value="Left"/>
@@ -69,13 +84,17 @@
                             <Setter Property="BorderThickness" Value="1.25"/>
                             <Setter Property="BorderBrush" Value="Gold"/>
                             <Setter Property="Background">
+                                
                                 <Setter.Value>
                                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                                         <GradientStop Color="DarkGoldenrod" Offset="0.0"/>
                                         <GradientStop Color="NavajoWhite" Offset="1.0"/>
                                     </LinearGradientBrush>
+                               
                                 </Setter.Value>
+                            
                             </Setter>
+                            
                             <Setter Property="ContentTemplate">
                                 <Setter.Value>
                                     <DataTemplate>
@@ -85,7 +104,9 @@
                                     </DataTemplate>
                                 </Setter.Value>
                             </Setter>
+                        
                         </Style>
+                    
                     </StackPanel.Resources>
 
                     <Grid Style="{StaticResource sidebar_grids}" x:Name="Back_Btn_Grid" Height="40" Visibility="Collapsed">
@@ -101,8 +122,6 @@
                         <Image Source="Assets/Search_Button.png" Stretch="Uniform" Margin="16, 9" HorizontalAlignment="Right"/>
                     </Grid>
 
-
-
                     <Grid Style="{StaticResource sidebar_grids}" x:Name="Campaign_Btn_Grid">
 
                         <Button x:Name="Campaign_Btn"
@@ -112,6 +131,7 @@
                                 />
 
                     </Grid>
+                    
                     <Grid Style="{StaticResource sidebar_grids}" x:Name="Adventure_Btn_Grid">
                         <Button x:Name="Adventure_Btn"
                             Style="{StaticResource sidebar_buttons}"
@@ -119,6 +139,7 @@
                             Click="Adventure_Btn_Click"
                                 />
                     </Grid>
+                    
                     <Grid Style="{StaticResource sidebar_grids}" x:Name="NPCs_Btn_Grid">
                         <Button x:Name="NPCs_Btn"
                             Style="{StaticResource sidebar_buttons}"
@@ -126,6 +147,7 @@
                             Click="NPC_Btn_Click"
                                 />
                     </Grid>
+                    
                     <Grid Style="{StaticResource sidebar_grids}" x:Name="Encounters_Btn_Grid">
                         <Button x:Name="Encounters_Btn"
                             Style="{StaticResource sidebar_buttons}"
@@ -133,13 +155,16 @@
                             Click="Encounter_Btn_Click"
                                 />
                     </Grid>
-
+                    
+                    <!--Used for query result elements, so that search bar and back button are unaffected by stack-->
                     <StackPanel x:Name="Secondary_st_pnl"/>
 
-
                 </StackPanel>
+            
             </ScrollViewer>
 
         </Grid>
+    
     </Grid>
+
 </Window>

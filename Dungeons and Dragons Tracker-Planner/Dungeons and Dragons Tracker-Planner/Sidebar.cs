@@ -11,25 +11,75 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 {
     internal class Sidebar
     {
+        MainWindow targetWindow = Application.Current.Windows.Cast<Window>().FirstOrDefault(window => window is MainWindow) as MainWindow;
 
+        private IDriver _driver;
+        private FlowChart flowChart;
+        
         internal int sidebar_state = 0;
         
         internal List<string> sidebar_nav_states = new List<string>();
-
-        MainWindow targetWindow = Application.Current.Windows.Cast<Window>().FirstOrDefault(window => window is MainWindow) as MainWindow;
 
         private Grid Campaign_Btn_Grid, Adventure_Btn_Grid, NPCs_Btn_Grid, Encounters_Btn_Grid, Back_Btn_Grid;
 
         private StackPanel st_pnl, Secondary_st_pnl;
 
         private TextBox SearchText;
-
-        private IDriver _driver;
-
-        private FlowChart flowChart;
         
         internal string current_campaign;
         internal string current_adventure;
+
+        public Sidebar(IDriver _driver, FlowChart flowChart) 
+        {
+            this._driver = _driver;
+            this.flowChart = flowChart;
+
+            Campaign_Btn_Grid = targetWindow.Campaign_Btn_Grid;
+            Adventure_Btn_Grid = targetWindow.Adventure_Btn_Grid;
+            NPCs_Btn_Grid = targetWindow.NPCs_Btn_Grid;
+            Encounters_Btn_Grid = targetWindow.Encounters_Btn_Grid;
+            Back_Btn_Grid = targetWindow.Back_Btn_Grid;
+
+            st_pnl = targetWindow.st_pnl;
+            Secondary_st_pnl = targetWindow.Secondary_st_pnl;
+
+            SearchText = targetWindow.SearchText;
+        }
+
+        private async Task<List<List<string>>> sessionRead(string query, int numberOfColumns)
+        {
+            using (var session = _driver.AsyncSession())
+            {
+                var queryResults = await session.ExecuteReadAsync(
+                    async tx =>
+                    {
+                        var resultsList = new List<List<string>>();
+
+                        for (int i = 0; i < numberOfColumns; i++)
+                        {
+                            resultsList.Add(new List<string>());
+                        }
+
+                        var reader = await tx.RunAsync(
+                            query);
+
+                        while (await reader.FetchAsync())
+                        {
+                            for (int i = 0; i < numberOfColumns; i++)
+                            {
+                                if (reader.Current[i] != null)
+                                {
+                                    resultsList[i].Add(reader.Current[i].ToString());
+                                }
+                                else resultsList[i].Add(null);
+                            }
+                        }
+
+                        return resultsList;
+                    });
+                return queryResults;
+            }
+        }
 
         // Reads from the database and creates a button in the sidebar for each result
         private async void Search_SessionReader(string query)
@@ -40,9 +90,12 @@ namespace Dungeons_and_Dragons_Tracker_Planner
             {
                 Grid grid = new Grid();
                 Button button = new Button();
+
                 Secondary_st_pnl.Children.Add(grid);
+
                 grid.Children.Add(button);
                 grid.Style = (Style)st_pnl.FindResource("sidebar_grids");
+
                 button.Style = (Style)st_pnl.FindResource("sidebar_buttons");
                 button.Content = results[0][i];
 
@@ -240,40 +293,6 @@ namespace Dungeons_and_Dragons_Tracker_Planner
             }
         }
 
-        private async Task<List<List<string>>> sessionRead(string query, int numberOfColumns)
-        {
-            using (var session = _driver.AsyncSession())
-            {
-                var queryResults = await session.ExecuteReadAsync(
-                    async tx =>
-                    {
-                        var resultsList = new List<List<string>>();
-
-                        for (int i = 0; i < numberOfColumns; i++)
-                        {
-                            resultsList.Add(new List<string>());
-                        }
-
-                        var reader = await tx.RunAsync(
-                            query);
-
-                        while (await reader.FetchAsync())
-                        {
-                            for (int i = 0; i < numberOfColumns; i++)
-                            {
-                                if (reader.Current[i] != null)
-                                {
-                                    resultsList[i].Add(reader.Current[i].ToString());
-                                }
-                                else resultsList[i].Add(null);
-                            }
-                        }
-
-                        return resultsList;
-                    });
-                return queryResults;
-            }
-        }
 
         // Creates sidebar buttons from names list and assigns a provided eventhandler
         internal void Create_Content_Btns(List<string> names, RoutedEventHandler eventHandler)
@@ -329,8 +348,6 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
                     Create_Content_Btns(adventures[0], new RoutedEventHandler(targetWindow.ResultAdventure_Click));
 
-
-
                     break;
 
                 // If button is pressed from campaign
@@ -350,10 +367,6 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
                     Create_Content_Btns(campaign_adventures[0], new RoutedEventHandler(targetWindow.ResultAdventure_Click));
 
-                    break;
-
-                default:
-                    Console.WriteLine("Adventure defaulted!!!");
                     break;
             }
         }
@@ -417,10 +430,6 @@ namespace Dungeons_and_Dragons_Tracker_Planner
                     Create_Content_Btns(adventure_npcs[0], null);
 
                     break;
-
-                default:
-                    Console.WriteLine("NPC defaulted!!!");
-                    break;
             }
         }
 
@@ -483,28 +492,8 @@ namespace Dungeons_and_Dragons_Tracker_Planner
                     Create_Content_Btns(adventure_encounters[0], null);
 
                     break;
-
-                default:
-                    Console.WriteLine("Encounter defaulted!!!");
-                    break;
             }
         }
 
-        public Sidebar(IDriver _driver, FlowChart flowChart) 
-        {
-            this._driver = _driver;
-            this.flowChart = flowChart;
-
-            Campaign_Btn_Grid = targetWindow.Campaign_Btn_Grid;
-            Adventure_Btn_Grid = targetWindow.Adventure_Btn_Grid;
-            NPCs_Btn_Grid = targetWindow.NPCs_Btn_Grid;
-            Encounters_Btn_Grid = targetWindow.Encounters_Btn_Grid;
-            Back_Btn_Grid = targetWindow.Back_Btn_Grid;
-
-            st_pnl = targetWindow.st_pnl;
-            Secondary_st_pnl = targetWindow.Secondary_st_pnl;
-
-            SearchText = targetWindow.SearchText;
-        }
     }
 }

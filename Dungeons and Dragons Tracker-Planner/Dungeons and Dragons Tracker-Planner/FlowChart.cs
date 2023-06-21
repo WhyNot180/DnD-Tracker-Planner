@@ -31,6 +31,13 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
         private Grid entityClicked;
 
+        public FlowChart() 
+        {
+            canvas = targetWindow.canvas;
+            container_canvas = targetWindow.container_canvas;
+
+        }
+
         internal void Create_Chart_Entries(List<string> names)
         {
             container_canvas.Children.Clear();
@@ -46,15 +53,24 @@ namespace Dungeons_and_Dragons_Tracker_Planner
                 TextBlock text = new TextBlock();
 
                 container_canvas.Children.Add(grid);
+
+                // Name doesn't accept spaces or colons. Might need to be updated for all special characters
                 grid.Name = name.Replace(" ", "_").Replace(":", "");
                 grid.Children.Add(poly_view);
                 grid.Children.Add(text_view);
+
                 poly_view.Child = poly;
+
                 text_view.Child = text;
+
                 grid.Style = (Style)canvas.FindResource("chart_grid");
+
                 poly_view.Style = (Style)canvas.FindResource("chart_poly_viewbox");
+
                 text_view.Style = (Style)canvas.FindResource("chart_text_viewbox");
+
                 poly.Style = (Style)canvas.FindResource("chart_poly");
+
                 text.Style = (Style)canvas.FindResource("chart_text");
 
                 text.Text = name;
@@ -84,8 +100,10 @@ namespace Dungeons_and_Dragons_Tracker_Planner
                     Grid secondaryGrid = container_canvas.Children.OfType<Grid>().ToList().Find(g => g.Name.Equals(secondary_names.ElementAt(i).Replace(" ", "_").Replace(":", "")));
 
                     container_canvas.Children.Add(path);
-                    line.StartPoint = new System.Windows.Point((double)grid.GetValue(Canvas.LeftProperty) + grid.Width / 2, (double)grid.GetValue(Canvas.TopProperty) + grid.Height / 2);
-                    line.EndPoint = new System.Windows.Point((double)secondaryGrid.GetValue(Canvas.LeftProperty) + secondaryGrid.Width / 2, (double)secondaryGrid.GetValue(Canvas.TopProperty) + secondaryGrid.Height / 2);
+
+                    line.StartPoint = new Point((double)grid.GetValue(Canvas.LeftProperty) + grid.Width / 2, (double)grid.GetValue(Canvas.TopProperty) + grid.Height / 2);
+                    line.EndPoint = new Point((double)secondaryGrid.GetValue(Canvas.LeftProperty) + secondaryGrid.Width / 2, (double)secondaryGrid.GetValue(Canvas.TopProperty) + secondaryGrid.Height / 2);
+                    
                     path.Data = line;
 
                     path.Stroke = Brushes.Black;
@@ -181,10 +199,12 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
                 foreach (Grid chartEntity in container_canvas.Children.OfType<Grid>())
                 {
+                    // X pos of cursor - initial pos of cursor on element
                     double newLeft = e.GetPosition(container_canvas).X - firstXPos.ElementAt(container_canvas.Children.IndexOf(chartEntity)) - canvas.Margin.Left;
 
                     chartEntity.SetValue(Canvas.LeftProperty, newLeft);
-
+                    
+                    // Y pos of cursor - initial pos of cursor on element
                     double newTop = e.GetPosition(container_canvas).Y - firstYPos.ElementAt(container_canvas.Children.IndexOf(chartEntity)) - canvas.Margin.Top;
 
                     chartEntity.SetValue(Canvas.TopProperty, newTop);
@@ -204,11 +224,5 @@ namespace Dungeons_and_Dragons_Tracker_Planner
             }
         }
 
-        public FlowChart() 
-        {
-            canvas = targetWindow.canvas;
-            container_canvas = targetWindow.container_canvas;
-
-        }
     }
 }
