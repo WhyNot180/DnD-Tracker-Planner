@@ -74,7 +74,8 @@ namespace Dungeons_and_Dragons_Tracker_Planner
                 text.Style = (Style)canvas.FindResource("chart_text");
 
                 text.Text = name;
-
+                
+                // Temp positioning. Nodes should have X,Y property to save location data.
                 grid.SetValue(Canvas.LeftProperty, random.Next(-1000, 1000) + random.NextDouble());
                 grid.SetValue(Canvas.TopProperty, random.Next(-1000, 1000) + random.NextDouble());
 
