@@ -18,7 +18,11 @@ namespace Dungeons_and_Dragons_Tracker_Planner
     {
 
         // Neo4j .net driver
-        private static IDriver _driver;
+        private IDriver _driver;
+
+        private Sidebar sidebar;
+
+        private FlowChart flowChart;
 
         public void GraphDriver_Init(string uri)
         {
@@ -29,6 +33,8 @@ namespace Dungeons_and_Dragons_Tracker_Planner
         {
             InitializeComponent();
             GraphDriver_Init("bolt://localhost:7687");
+            sidebar = new Sidebar(_driver);
+
         }
 
         public void Dispose()
@@ -302,7 +308,7 @@ namespace Dungeons_and_Dragons_Tracker_Planner
             }
         }*/
 
-        private List<PathPair> pathGrids = new List<PathPair>();
+        /*private List<PathPair> pathGrids = new List<PathPair>();
 
         private void Create_Chart_Entries(List<string> names)
         {
@@ -369,7 +375,7 @@ namespace Dungeons_and_Dragons_Tracker_Planner
                     pathGrids.Add(new PathPair(path, grid, secondaryGrid));
                 }
             }
-        }
+        }*/
 
         /*private string current_campaign;
         private string current_adventure;
@@ -645,11 +651,11 @@ namespace Dungeons_and_Dragons_Tracker_Planner
             sidebar_nav_states.Add("Encounters");
 
         }
-        
+
         // Flowchart
 
         // The container object (container_canvas)
-        private object movingObject;
+        /*private object movingObject;
 
         // Initial x and y of chartEntries
         private List<double> firstXPos = new List<double>(), firstYPos = new List<double>();
@@ -657,7 +663,7 @@ namespace Dungeons_and_Dragons_Tracker_Planner
         // Initial line properties of chartPaths
         private List<LineGeometry> firstLine = new List<LineGeometry>();
 
-        private Grid entityClicked;
+        private Grid entityClicked;*/
 
         private void PreviewDown(object sender, MouseButtonEventArgs e)
         {
@@ -689,7 +695,7 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
         private void Zoom(object sender, MouseWheelEventArgs e)
         {
-            
+
             var position = e.GetPosition(container_canvas);
             var scale = e.Delta >= 0 ? 1.1 : (1.0 / 1.1); // Scales by 1.1 each time scrolling is detected
 
@@ -697,15 +703,15 @@ namespace Dungeons_and_Dragons_Tracker_Planner
             var matrix = transform.Matrix;
             matrix.ScaleAtPrepend(scale, scale, position.X, position.Y); // Scales at mouse position
             container_canvas.RenderTransform = new MatrixTransform(matrix);
-            
-            
+
+
         }
 
         private void MoveMouse(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed && sender == movingObject)
             {
-                
+
                 // If entity is being dragged or everything is
                 if (entityClicked != null)
                 {
@@ -723,16 +729,16 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
                         // Offset is required, as origin of path changes when they are moved
                         // Left and Top properties return NaN when initialized
-                        double leftOffset =  !Double.IsNaN((double)pathGrid.path.GetValue(Canvas.LeftProperty)) ? (double)pathGrid.path.GetValue(Canvas.LeftProperty) : 0;
+                        double leftOffset = !Double.IsNaN((double)pathGrid.path.GetValue(Canvas.LeftProperty)) ? (double)pathGrid.path.GetValue(Canvas.LeftProperty) : 0;
                         double topOffset = !Double.IsNaN((double)pathGrid.path.GetValue(Canvas.TopProperty)) ? (double)pathGrid.path.GetValue(Canvas.TopProperty) : 0;
 
                         // Places start/end point at same position as chartEntry
                         if (pathGrid.primaryGrid == entityClicked)
                         {
-                            line.StartPoint = new System.Windows.Point(newLeft + entityClicked.Width/2 - leftOffset, newTop + entityClicked.Height/2 - topOffset);
+                            line.StartPoint = new System.Windows.Point(newLeft + entityClicked.Width / 2 - leftOffset, newTop + entityClicked.Height / 2 - topOffset);
                         }
-                        
-                        if (pathGrid.secondaryGrid == entityClicked) 
+
+                        if (pathGrid.secondaryGrid == entityClicked)
                         {
                             line.EndPoint = new System.Windows.Point(newLeft + entityClicked.Width / 2 - leftOffset, newTop + entityClicked.Height / 2 - topOffset);
                         }
@@ -764,7 +770,7 @@ namespace Dungeons_and_Dragons_Tracker_Planner
                     double newTop = e.GetPosition(container_canvas).Y - firstYPos.ElementAt(container_canvas.Children.IndexOf(chartPath)) - canvas.Margin.Top;
 
                     chartPath.SetValue(Canvas.TopProperty, newTop);
-                    
+
                 }
             }
         }
