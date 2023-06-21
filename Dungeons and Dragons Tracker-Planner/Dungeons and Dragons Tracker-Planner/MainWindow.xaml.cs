@@ -33,8 +33,8 @@ namespace Dungeons_and_Dragons_Tracker_Planner
         {
             InitializeComponent();
             GraphDriver_Init("bolt://localhost:7687");
-            sidebar = new Sidebar(_driver);
-
+            flowChart = new FlowChart();
+            sidebar = new Sidebar(_driver, flowChart);
         }
 
         public void Dispose()
@@ -398,26 +398,26 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
         private void Campaign_Btn_Click(object sender, RoutedEventArgs e)
         {
-            Campaign_Btn_Click();
+            sidebar.Campaign_Btn_Click();
 
-            sidebar_nav_states.Add("Campaigns");
+            sidebar.sidebar_nav_states.Add("Campaigns");
 
         }
 
         internal void ResultCampaign_Click(object sender, RoutedEventArgs e)
         {
-            sidebar_state++;
+            sidebar.sidebar_state++;
 
             Button button = e.Source as Button;
 
-            current_campaign = button.Content.ToString();
+            sidebar.current_campaign = button.Content.ToString();
 
-            if (sidebar_nav_states.Count() == 0)
+            if (sidebar.sidebar_nav_states.Count() == 0)
             {
-                sidebar_nav_states.Add("Campaigns");
+                sidebar.sidebar_nav_states.Add("Campaigns");
             }
 
-            sidebar_nav_states.Add(current_campaign);
+            sidebar.sidebar_nav_states.Add(sidebar.current_campaign);
 
             Secondary_st_pnl.Children.Clear();
             Adventure_Btn_Grid.Visibility = Visibility.Visible;
@@ -428,18 +428,18 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
         internal void ResultAdventure_Click(object sender, RoutedEventArgs e)
         {
-            if (sidebar_state == 1) sidebar_state++; else sidebar_state += 2;
+            if (sidebar.sidebar_state == 1) sidebar.sidebar_state++; else sidebar.sidebar_state += 2;
 
             Button button = e.Source as Button;
 
-            current_adventure = button.Content.ToString();
+            sidebar.current_adventure = button.Content.ToString();
 
-            if (sidebar_nav_states.Count() == 0)
+            if (sidebar.sidebar_nav_states.Count() == 0)
             {
-                sidebar_nav_states.Add("Adventures");
+                sidebar.sidebar_nav_states.Add("Adventures");
             }
 
-            sidebar_nav_states.Add(current_adventure);
+            sidebar.sidebar_nav_states.Add(sidebar.current_adventure);
 
             Secondary_st_pnl.Children.Clear();
             NPCs_Btn_Grid.Visibility = Visibility.Visible;
@@ -499,9 +499,9 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
         private void Adventure_Btn_Click(object sender, RoutedEventArgs e)
         {
-            Adventure_Btn_Click();
+            sidebar.Adventure_Btn_Click();
 
-            sidebar_nav_states.Add("Adventures");
+            sidebar.sidebar_nav_states.Add("Adventures");
         }
 
         /*private async void NPC_Btn_Click()
@@ -572,9 +572,9 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
         private void NPC_Btn_Click(object sender, RoutedEventArgs e)
         {
-            NPC_Btn_Click();
+            sidebar.NPC_Btn_Click();
 
-            sidebar_nav_states.Add("NPCs");
+            sidebar.sidebar_nav_states.Add("NPCs");
 
         }
 
@@ -646,9 +646,9 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
         private void Encounter_Btn_Click(object sender, RoutedEventArgs e)
         {
-            Encounter_Btn_Click();
+            sidebar.Encounter_Btn_Click();
 
-            sidebar_nav_states.Add("Encounters");
+            sidebar.sidebar_nav_states.Add("Encounters");
 
         }
 

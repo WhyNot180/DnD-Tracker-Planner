@@ -12,7 +12,9 @@ namespace Dungeons_and_Dragons_Tracker_Planner
     internal class Sidebar
     {
 
-        private int sidebar_state = 0;
+        internal int sidebar_state = 0;
+        
+        internal List<string> sidebar_nav_states = new List<string>();
 
         MainWindow targetWindow = Application.Current.Windows.Cast<Window>().FirstOrDefault(window => window is MainWindow) as MainWindow;
 
@@ -23,6 +25,11 @@ namespace Dungeons_and_Dragons_Tracker_Planner
         private TextBox SearchText;
 
         private IDriver _driver;
+
+        private FlowChart flowChart;
+        
+        internal string current_campaign;
+        internal string current_adventure;
 
         // Reads from the database and creates a button in the sidebar for each result
         private async void Search_SessionReader(string query)
@@ -53,7 +60,7 @@ namespace Dungeons_and_Dragons_Tracker_Planner
         }
 
         // Eventhandler for search bar
-        private async void SearchText_Changed(object sender, RoutedEventArgs e)
+        internal async void SearchText_Changed(object sender, RoutedEventArgs e)
         {
 
             Secondary_st_pnl.Children.Clear();
@@ -157,9 +164,8 @@ namespace Dungeons_and_Dragons_Tracker_Planner
             }
         }
 
-        private List<string> sidebar_nav_states = new List<string>();
 
-        private void Back_Btn_Clicked(object sender, RoutedEventArgs e)
+        internal void Back_Btn_Clicked(object sender, RoutedEventArgs e)
         {
 
             SearchText.Text = "";
@@ -270,7 +276,7 @@ namespace Dungeons_and_Dragons_Tracker_Planner
         }
 
         // Creates sidebar buttons from names list and assigns a provided eventhandler
-        private void Create_Content_Btns(List<string> names, RoutedEventHandler eventHandler)
+        internal void Create_Content_Btns(List<string> names, RoutedEventHandler eventHandler)
         {
             foreach (var name in names)
             {
@@ -285,10 +291,8 @@ namespace Dungeons_and_Dragons_Tracker_Planner
             }
         }
 
-        private string current_campaign;
-        private string current_adventure;
 
-        private async void Campaign_Btn_Click()
+        internal async void Campaign_Btn_Click()
         {
             Campaign_Btn_Grid.Visibility = Visibility.Collapsed;
             Adventure_Btn_Grid.Visibility = Visibility.Collapsed;
@@ -299,12 +303,12 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
             var campaigns = await sessionRead("MATCH (c:Campaign) RETURN c.name", 1);
 
-            Create_Chart_Entries(campaigns[0]);
+            flowChart.Create_Chart_Entries(campaigns[0]);
 
             Create_Content_Btns(campaigns[0], new RoutedEventHandler(targetWindow.ResultCampaign_Click));
         }
 
-        private async void Adventure_Btn_Click()
+        internal async void Adventure_Btn_Click()
         {
             switch (sidebar_state)
             {
@@ -319,9 +323,9 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
                     var adventures = await sessionRead("MATCH (a:Adventure) OPTIONAL MATCH (a)-[r]->(b:Adventure) RETURN a.name, b.name, type(r)", 3);
 
-                    Create_Chart_Entries(adventures[0]);
+                    flowChart.Create_Chart_Entries(adventures[0]);
 
-                    Create_Chart_Lines(adventures[1], adventures[2]);
+                    flowChart.Create_Chart_Lines(adventures[1], adventures[2]);
 
                     Create_Content_Btns(adventures[0], new RoutedEventHandler(targetWindow.ResultAdventure_Click));
 
@@ -340,9 +344,9 @@ namespace Dungeons_and_Dragons_Tracker_Planner
                                     OPTIONAL MATCH (a)-[r]->(b:Adventure) 
                                     RETURN a.name, b.name, type(r)", 3);
 
-                    Create_Chart_Entries(campaign_adventures[0]);
+                    flowChart.Create_Chart_Entries(campaign_adventures[0]);
 
-                    Create_Chart_Lines(campaign_adventures[1], campaign_adventures[2]);
+                    flowChart.Create_Chart_Lines(campaign_adventures[1], campaign_adventures[2]);
 
                     Create_Content_Btns(campaign_adventures[0], new RoutedEventHandler(targetWindow.ResultAdventure_Click));
 
@@ -354,7 +358,7 @@ namespace Dungeons_and_Dragons_Tracker_Planner
             }
         }
 
-        private async void NPC_Btn_Click()
+        internal async void NPC_Btn_Click()
         {
             switch (sidebar_state)
             {
@@ -369,9 +373,9 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
                     var npcs = await sessionRead("MATCH (n:NPC) OPTIONAL MATCH (n)-[r]->(b:NPC) RETURN n.name, b.name, type(r)", 3);
 
-                    Create_Chart_Entries(npcs[0]);
+                    flowChart.Create_Chart_Entries(npcs[0]);
 
-                    Create_Chart_Lines(npcs[1], npcs[2]);
+                    flowChart.Create_Chart_Lines(npcs[1], npcs[2]);
 
                     Create_Content_Btns(npcs[0], null);
 
@@ -388,9 +392,9 @@ namespace Dungeons_and_Dragons_Tracker_Planner
                                     OPTIONAL MATCH (n)-[r]->(b:NPC) 
                                     RETURN n.name, b.name, type(r)", 3);
 
-                    Create_Chart_Entries(campaign_npcs[0]);
+                    flowChart.Create_Chart_Entries(campaign_npcs[0]);
 
-                    Create_Chart_Lines(campaign_npcs[1], campaign_npcs[2]);
+                    flowChart.Create_Chart_Lines(campaign_npcs[1], campaign_npcs[2]);
 
                     Create_Content_Btns(campaign_npcs[0], null);
 
@@ -406,9 +410,9 @@ namespace Dungeons_and_Dragons_Tracker_Planner
                                     OPTIONAL MATCH (n)-[r]->(b:NPC) 
                                     RETURN n.name, b.name, type(r)", 3);
 
-                    Create_Chart_Entries(adventure_npcs[0]);
+                    flowChart.Create_Chart_Entries(adventure_npcs[0]);
 
-                    Create_Chart_Lines(adventure_npcs[1], adventure_npcs[2]);
+                    flowChart.Create_Chart_Lines(adventure_npcs[1], adventure_npcs[2]);
 
                     Create_Content_Btns(adventure_npcs[0], null);
 
@@ -420,7 +424,7 @@ namespace Dungeons_and_Dragons_Tracker_Planner
             }
         }
 
-        private async void Encounter_Btn_Click()
+        internal async void Encounter_Btn_Click()
         {
             switch (sidebar_state)
             {
@@ -435,9 +439,9 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
                     var encounters = await sessionRead("MATCH (e:Encounter) OPTIONAL MATCH (e)-[r]->(b:Encounter) RETURN e.name, b.name, type(r)", 3);
 
-                    Create_Chart_Entries(encounters[0]);
+                    flowChart.Create_Chart_Entries(encounters[0]);
 
-                    Create_Chart_Lines(encounters[1], encounters[2]);
+                    flowChart.Create_Chart_Lines(encounters[1], encounters[2]);
 
                     Create_Content_Btns(encounters[0], null);
 
@@ -454,9 +458,9 @@ namespace Dungeons_and_Dragons_Tracker_Planner
                                     OPTIONAL MATCH (e)-[r]->(b:Encounter) 
                                     RETURN e.name, b.name, type(r)", 3);
 
-                    Create_Chart_Entries(campaign_encounters[0]);
+                    flowChart.Create_Chart_Entries(campaign_encounters[0]);
 
-                    Create_Chart_Lines(campaign_encounters[1], campaign_encounters[2]);
+                    flowChart.Create_Chart_Lines(campaign_encounters[1], campaign_encounters[2]);
 
                     Create_Content_Btns(campaign_encounters[0], null);
 
@@ -472,9 +476,9 @@ namespace Dungeons_and_Dragons_Tracker_Planner
                                     OPTIONAL MATCH (e)-[r]->(b:Encounter) 
                                     RETURN e.name, b.name, type(r)", 3);
 
-                    Create_Chart_Entries(adventure_encounters[0]);
+                    flowChart.Create_Chart_Entries(adventure_encounters[0]);
 
-                    Create_Chart_Lines(adventure_encounters[1], adventure_encounters[2]);
+                    flowChart.Create_Chart_Lines(adventure_encounters[1], adventure_encounters[2]);
 
                     Create_Content_Btns(adventure_encounters[0], null);
 
@@ -486,9 +490,10 @@ namespace Dungeons_and_Dragons_Tracker_Planner
             }
         }
 
-        public Sidebar(IDriver _driver) 
+        public Sidebar(IDriver _driver, FlowChart flowChart) 
         {
             this._driver = _driver;
+            this.flowChart = flowChart;
 
             Campaign_Btn_Grid = targetWindow.Campaign_Btn_Grid;
             Adventure_Btn_Grid = targetWindow.Adventure_Btn_Grid;
