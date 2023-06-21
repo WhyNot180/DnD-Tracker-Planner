@@ -60,7 +60,7 @@ namespace Dungeons_and_Dragons_Tracker_Planner
         }
 
         // Eventhandler for search bar
-        internal async void SearchText_Changed(object sender, RoutedEventArgs e)
+        internal async void SearchText_Changed()
         {
 
             Secondary_st_pnl.Children.Clear();
@@ -165,7 +165,7 @@ namespace Dungeons_and_Dragons_Tracker_Planner
         }
 
 
-        internal void Back_Btn_Clicked(object sender, RoutedEventArgs e)
+        internal void Back_Btn_Clicked()
         {
 
             SearchText.Text = "";
