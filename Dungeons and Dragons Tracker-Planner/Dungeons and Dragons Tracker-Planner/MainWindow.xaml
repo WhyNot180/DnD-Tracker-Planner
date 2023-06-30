@@ -64,6 +64,15 @@
               HorizontalAlignment="Left"
               Width="150"
               Background="#2E333A">
+
+            <Grid Width="30" Height="30" HorizontalAlignment="Right" Margin="-30, 10"
+                  VerticalAlignment="Top">
+                <Button Background="Transparent" BorderBrush="Gold" BorderThickness="3">
+                    <Button.Content>
+                        <TextBlock Text="+" FontSize="35" Margin="-13, -28" Foreground="Maroon"/>
+                    </Button.Content>
+                </Button>
+            </Grid>
             
             <ScrollViewer x:Name="sv_pnl" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
                 
