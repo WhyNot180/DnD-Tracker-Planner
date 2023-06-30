@@ -58,6 +58,13 @@
             </Canvas>
             
         </Canvas>
+
+        <Grid Width="250" HorizontalAlignment="Right" Background="SaddleBrown">
+            <Viewbox Width="100" Height="30" VerticalAlignment="Top" HorizontalAlignment="Center">
+                <TextBlock Text="" Foreground="PaleGoldenrod" TextAlignment="Center"/>
+            </Viewbox>
+            
+        </Grid>
         
         <!--Sidebar panel-->
         <Grid x:Name="nav_pnl"
@@ -67,7 +74,7 @@
 
             <Grid Width="30" Height="30" HorizontalAlignment="Right" Margin="-30, 10"
                   VerticalAlignment="Top">
-                <Button Background="Transparent" BorderBrush="Gold" BorderThickness="3">
+                <Button Background="Transparent" BorderBrush="Gold" BorderThickness="3" Click="Creation_Btn_Click">
                     <Button.Content>
                         <TextBlock Text="+" FontSize="35" Margin="-13, -28" Foreground="Maroon"/>
                     </Button.Content>

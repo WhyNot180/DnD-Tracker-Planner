@@ -118,6 +118,11 @@ namespace Dungeons_and_Dragons_Tracker_Planner
 
         }
 
+        private void Creation_Btn_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         private void PreviewDown(object sender, MouseButtonEventArgs e)
         {
             flowChart.PreviewDown(sender, e);
